@@ -79,3 +79,29 @@ class Sarufi(object):
         )
         response = requests.post(url, data=data, headers=self.headers)
         return response.json()
+
+
+class Bot(object):
+    def __init__(self, data):
+        self.data = data
+    
+    @property
+    def id(self):
+        return self.data.get("id")
+    
+    @property
+    def name(self):
+        return self.data.get("name")
+    
+    @property
+    def description(self):
+        return self.data.get("description")
+    
+    @property
+    def intents(self):
+        return self.data.get("training_data")
+
+    @property
+    def flow(self):
+        return self.data.get("flow")
+    
