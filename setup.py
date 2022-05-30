@@ -8,7 +8,7 @@ from setuptools import setup
 #     long_description = f.read()
 
 setup(
-    name="heyoo",
+    name="sarufi",
     version="0.0.1",
     description="Opensource python wrapper to Sarufi Conversation API",
     # long_description=long_description,

@@ -12,7 +12,87 @@ cd sarufi-python-sdk
 sarufi-python-sdk $ python setup.py install
 ```
 
-## Usage
+## Authentication
+
+To authenticate you're bot, you have to specify your username and password for Sarufi Platform just as shown below;
+
+```python
+>>> from sarufi import Sarufi
+>>> sarufi = Sarufi('username', 'password')
+```
+
+## Creating a Bot
+
+To create you're bot with sarufi, you have to be aware of two importants idea or concepts which is **intents** and **flow**.
+
+Here an example on how to create your bot;
+
+```python
+sarufi.create_bot(
+    project_name="Athony bot",
+    description="My bot can do a lot",
+    training_data={
+        "salamu": ["Mambo", "Hi", "Hello", "Niaje"],
+        "contact": [
+            "naomba mawasiliano",
+            "naomba number",
+            "naomba namba",
+            "nipe mawasiliano",
+            "nipe contact",
+        ],
+    },
+    flow={
+        "salamu": {"message": ["Hi", "Naimani upo salama"], "next": "end"},
+        "contact": {
+            "message": ["Ungependa kupata namba ya nani ?"],
+            "next": "chukua_namba",
+        },
+        "chukua_namba": {
+            "message": ["Namba ya huyo mtu ni 07374734737", "Karibu tena !!"],
+            "next": "end",
+        },
+    },
+)
+```
+
+## Updating bot
+
+Updating the bot is comparatively similar to creating a bot but this time you have to explicity specify the **project ID** of your bot.
+
+```python
+sarufi.update_bot(
+    project_name="Athony bot",
+    description="My bot can do a lot",
+    training_data={
+        "salamu": ["Mambo", "Hi", "Hello", "Niaje"],
+        "contact": [
+            "naomba mawasiliano",
+            "naomba number",
+            "naomba namba",
+            "nipe mawasiliano",
+            "nipe contact",
+        ],
+    },
+    flow={
+        "salamu": {"message": ["Hi", "Naimani upo salama"], "next": "end"},
+        "contact": {
+            "message": ["Ungependa kupata namba ya nani ?"],
+            "next": "chukua_namba",
+        },
+        "chukua_namba": {
+            "message": ["Namba ya huyo mtu ni 07374734737", "Karibu tena !!"],
+            "next": "end",
+        },
+    },
+    project_id=2,
+)
+```
+
+## Using it in a conversation
+
+Here you have to know the bot ID and also specify your user unique ID;
+
+Please also see [example 01]()
 
 ```python
 >>> from sarufi import Sarufi
@@ -41,31 +121,3 @@ Are you facing any issue with the usage of the package, please raise one
 ## Contributors
 
 1. [kalebu](https://github.com/kalebu/)
-
-## Creating Bot
-
-1. Intents
-2. Flow of a conversation
-3. Be able to use the conversation created
-4. Deploying a bot to a messaging channel
-    a. Telegram
-    b. WhatsApp
-    c. Messenger
-    d. Anywhere
-
-## Conversational insuarance
-
-### Intents
-
-1. greetings (closed ended)
-2. goodbye (closed ended)
-3. purchase insuarance
-    a. users name
-    b. type insurance (1. Health, 2. Car, 3. House)
-    c. amount
-    d. pay now
-4. update insuarance
-5. revoke insuarance
-    a. insuarance number
-    b. reason for cancelling
-    c. confirmation
