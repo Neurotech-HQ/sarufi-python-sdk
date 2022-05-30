@@ -1,0 +1,50 @@
+{
+    "greetings": [
+        "Hi",
+        "Hello",
+        "Mambo",
+        "Hola",
+        "Salut"
+    ],
+    "goodbye": [
+        "Bye",
+        "Goodbye",
+        "See you later",
+        "Adios",
+        "Au revoir"
+    ],
+    "thanks": [
+        "You're welcome",
+        "No problem",
+        "My pleasure",
+        "Anytime",
+        "No problem"
+    ],
+    "confused": [
+        "I'm sorry, I don't understand",
+        "I'm not sure I understand",
+        "I'm sorry, can you repeat that?",
+        "I'm sorry, what was that?",
+        "I'm sorry, I didn't understand that"
+    ],
+    "purchase_insurance": [
+        "I want to purchase insurance",
+        "I want to buy insurance",
+        "I want to buy an insurance",
+        "Need to buy insurance",
+        "Can I buy insurance",
+        "Help me buy insurance",
+        "Buy insurance",
+        "I would like to buy insurance"
+    ],
+    "revoke_insurance": [
+        "I want to revoke insurance",
+        "I want to cancel insurance",
+        "I want to cancel my insurance",
+        "Need to cancel insurance",
+        "Can I cancel insurance",
+        "Help me cancel insurance",
+        "Cancel insurance",
+        "I would like to cancel insurance"
+    ]
+}

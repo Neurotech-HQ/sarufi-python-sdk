@@ -1,0 +1,166 @@
+{
+    "greetings": {
+        "message": [
+            "Hello, how can I help you?"
+        ],
+        "next": "end"
+    },
+    "goodbye": {
+        "message": [
+            "Goodbye, hope to see you again soon"
+        ],
+        "next": "end"
+    },
+    "thanks": {
+        "message": [
+            "You're welcome"
+        ],
+        "next": "end"
+    },
+    "confused": {
+        "message": [
+            "I'm sorry, I didn't understand you"
+        ],
+        "next": "end"
+    },
+    "purchase_insurance": {
+        "message": [
+            "Sure, I can help you with that",
+            "Can I have your name ?"
+        ],
+        "next": "get_name"
+    },
+    "get_name": {
+        "message": [
+            "Thanks {name}, Please select type of insurance you want to purchase",
+            "1. Car Insurance",
+            "2. Home Insurance",
+            "3. Health Insurance"
+        ],
+        "next": "choice_insurance"
+    },
+    "choice_insurance": {
+        "1": "car_insurance",
+        "2": "home_insurance",
+        "3": "health_insurance"
+    },
+    "car_insurance": {
+        "message": [
+            "Please send me plate number of your car",
+            "For example, MH-12-1234"
+        ],
+        "next": "pay_insurance"
+    },
+    "home_insurance": {
+        "message": [
+            "Please send me address of your home",
+            "For example, 123 Main Street, New York, NY 12345"
+        ],
+        "next": "pay_insurance"
+    },
+    "health_insurance": {
+        "message": [
+            "Please send me your health insurance number",
+            "For example, 123456789"
+        ],
+        "next": "pay_insurance"
+    },
+    "pay_insurance": {
+        "message": [
+            "Please send me your payment method",
+            "1. Credit Card",
+            "2. Debit Card",
+            "3. Net Banking"
+        ],
+        "next": "choice_payment"
+    },
+    "choice_payment": {
+        "1": "credit_card",
+        "2": "debit_card",
+        "3": "net_banking"
+    },
+    "credit_card": {
+        "message": [
+            "Please send me your credit card number",
+            "For example, 1234567890123456"
+        ],
+        "next": "specify_amount"
+    },
+    "debit_card": {
+        "message": [
+            "Please send me your debit card number",
+            "For example, 1234567890123456"
+        ],
+        "next": "specify_amount"
+    },
+    "net_banking": {
+        "message": [
+            "Please send me your net banking account number",
+            "For example, 1234567890123456"
+        ],
+        "next": "specify_amount"
+    },
+    "specify_amount": {
+        "message": [
+            "Please send me the amount you want to pay",
+            "For example, 1000"
+        ],
+        "next": "confirm_payment"
+    },
+    "confirm_payment": {
+        "message": [
+            "Please confirm your payment",
+            "1. Yes",
+            "2. No"
+        ],
+        "next": "choice_payment_choice"
+    },
+    "choice_payment_choice": {
+        "1": "payment_success",
+        "2": "payment_failure"
+    },
+    "payment_success": {
+        "message": [
+            "Your payment is successful"
+        ],
+        "next": "end"
+    },
+    "payment_failure": {
+        "message": [
+            "Your payment is failed"
+        ],
+        "next": "end"
+    },
+    "revoke_insurance": {
+        "message": [
+            "Sure, I can help you with that",
+            "Can I have your insurance number ?"
+        ],
+        "next": "get_insurance_number"
+    },
+    "get_insurance_number": {
+        "message": [
+            "You are about to revoke your insurance",
+            "Please confirm cancellation",
+            "1. Yes",
+            "2. No"
+        ],
+        "next": "choice_insurance_revoke"
+    },
+    "choice_insurance_revoke": {
+        "1": "insurance_revoke_success",
+        "2": "insurance_revoke_failure"
+    },
+    "insurance_revoke_success": {
+        "message": [
+            "Your insurance is revoked successfully"
+        ],
+        "next": "end"
+    },
+    "insurance_revoke_failure": {
+        "message": [
+            "Your insurance is not revoked"
+        ],
+        "next": "end"
+    }
+}
