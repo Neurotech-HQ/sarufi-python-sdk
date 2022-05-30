@@ -123,5 +123,5 @@ Are you facing any issue with the usage of the package, please raise one
 ## Contributors
 
 1. [kalebu](https://github.com/kalebu/)
-
+2. [Anthony Mipawa](https://github.com/Tonyloyt)
 </samp>
