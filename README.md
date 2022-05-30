@@ -1,10 +1,12 @@
+<samp>
+
 # sarufi-python-sdk
 
 Sarufi Python SDK to help you interact with SARUFI platform
 
 ## Installation
 
-Make sure you have ]sarufi package](<https://github.com/Neurotech-HQ/sarufi-python-sdk>) installed on your machine before launching your telegram bot, you can easily install by the following command;
+Make sure you have [sarufi package](https://github.com/Neurotech-HQ/sarufi-python-sdk) installed on your machine before launching your telegram bot, you can easily install by the following command;
 
 ```bash
 git clone https://github.com/Neurotech-HQ/sarufi-python-sdk
@@ -121,3 +123,5 @@ Are you facing any issue with the usage of the package, please raise one
 ## Contributors
 
 1. [kalebu](https://github.com/kalebu/)
+
+</samp>
