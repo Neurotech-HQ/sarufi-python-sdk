@@ -24,15 +24,19 @@ class Sarufi(object):
         )
         return response.json()
 
-    def list_bots(self):
+    def bots(self):
         url = self.BASE_URL + "projects"
         response = requests.get(url, headers=self.headers)
+        if response.status_code == 200:
+            return [Bot(bot) for bot in response.json()]
         return response.json()
 
     # Not implemented yet
     def get_bot(self, project_id):
         url = self.BASE_URL + "projects/" + str(project_id)
         response = requests.get(url, headers=self.headers)
+        if response.status_code == 200:
+            return Bot(response.json())
         return response.json()
 
     def create_bot(self, project_name, description=None, training_data=None, flow=None):
@@ -84,19 +88,19 @@ class Sarufi(object):
 class Bot(object):
     def __init__(self, data):
         self.data = data
-    
+
     @property
     def id(self):
         return self.data.get("id")
-    
+
     @property
     def name(self):
         return self.data.get("name")
-    
+
     @property
     def description(self):
         return self.data.get("description")
-    
+
     @property
     def intents(self):
         return self.data.get("training_data")
@@ -104,4 +108,9 @@ class Bot(object):
     @property
     def flow(self):
         return self.data.get("flow")
-    
+
+    def __str__(self) -> str:
+        return f"Bot(id={self.id}, name={self.name}, description={self.description})"
+
+    def __repr__(self) -> str:
+        return self.__str__()
