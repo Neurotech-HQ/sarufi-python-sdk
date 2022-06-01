@@ -4,7 +4,7 @@ import requests
 
 
 class Sarufi(object):
-    BASE_URL = "http://api.sarufi.io/v1/"
+    BASE_URL = "https://api.sarufi.io/v1/"
 
     def __init__(self, username, password):
         self.username = username
