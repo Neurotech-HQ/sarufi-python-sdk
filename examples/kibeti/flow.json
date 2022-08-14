@@ -1,0 +1,71 @@
+{
+    "salamu": {
+        "message": [
+            "Karibu Mbeti Unaweza",
+            "Beti chap pata hela yako hapo hapo"
+        ],
+        "next": "end"
+    },
+    "weka_beti": {
+        "message": [
+            "Chagua mechi !!",
+            "1. Manchecter United vs  Liverpool",
+            "2. Manchecter United vs  Manchester City"
+        ],
+        "next": "choice_choose_match"
+    },
+    "choice_choose_match": {
+        "1": "beti_1",
+        "2": "beti_2"
+    },
+    "beti_1": {
+        "message": [
+            "Chagua Timu itakayo shinda ?",
+            "1. Manchecter United",
+            "2. Liverpool"
+        ],
+        "next": "choice_choosed_winner"
+    },
+    "beti_2": {
+        "message": [
+            "Chagua Timu itakayo shinda ?",
+            "1. Manchecter United",
+            "2. Manchester City"
+        ],
+        "next": "choice_choosed_winner"
+    },
+    "choice_choosed_winner": {
+        "1": "choosed_winner",
+        "2": "choosed_winner"
+    },
+    "choosed_winner": {
+        "message": [
+            "Kiasi gani ?"
+        ],
+        "next": "choose_amount"
+    },
+    "choose_amount": {
+        "message": [
+            "Asante Umeweka beti yao"
+        ],
+        "next": "end"
+    },
+    "toa_hela": {
+        "message": [
+            "Kiasi gani ?"
+        ],
+        "next": "toa_amount"
+    },
+    "toa_amount": {
+        "message": [
+            "Ingiza password yako ?"
+        ],
+        "next": "toa_password"
+    },
+    "toa_password": {
+        "message": [
+            "Asante Kwa kubeti, Subiria Matokeo"
+        ],
+        "next": "end"
+    }
+}
