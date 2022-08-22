@@ -5,11 +5,12 @@ from sarufi import Sarufi
 sarufi = Sarufi("kalebu@neurotech.africa", "123")
 
 
-def updae_bot():
+def update_bot():
     sarufi.update_bot(
-        project_name="Athony bot",
+        id=4,
+        name="Athony bot",
         description="My bot can do a lot",
-        training_data={
+        intents={
             "salamu": ["Mambo", "Hi", "Hello", "Niaje"],
             "contact": [
                 "naomba mawasiliano",
@@ -23,14 +24,13 @@ def updae_bot():
             "salamu": {"message": ["Hi", "Naimani upo salama"], "next": "end"},
             "contact": {
                 "message": ["Ungependa kupata namba ya nani ?"],
-                "next": "chukua_namba",
+                "next_state": "chukua_namba",
             },
             "chukua_namba": {
                 "message": ["Namba ya huyo mtu ni 07374734737", "Karibu tena !!"],
-                "next": "end",
+                "next_state": "end",
             },
         },
-        project_id=2,
     )
 
 
