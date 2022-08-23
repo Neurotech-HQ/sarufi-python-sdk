@@ -1,7 +1,11 @@
+import os
 import json
 import logging
 import requests
 from uuid import uuid4
+from pathlib import Path
+from yaml import safe_load
+from __future__ import annotations
 from typing import Dict, Dict, Any, List, Optional, Union, Tuple, Callable, cast
 
 # Set up logging
@@ -24,6 +28,35 @@ class Sarufi(object):
     @staticmethod
     def strip_of_nones(data: Dict):
         return {k: v for k, v in data.items() if v is not None}
+
+    @staticmethod
+    def read_file(_file: Union[Path, str]) -> Dict[Any, Any]:
+        """read_file
+            Reads a file and returns the contents as a dict
+        Args:
+            _file (Union[Path, str]): File to read(path or filename) | (intents, flows)
+
+        Raises:
+            FileNotFoundError: If file is not found
+
+        Returns:
+            Dict[Any, Any]: Contents of the file as a dict
+        """
+
+        if os.path.exists(_file):
+            try:
+                if any(_file.endswith(ext for ext in [".yaml", ".yml"])):
+                    logging.info(f"Reading {_file} as YAML")
+                    return safe_load(open(_file))
+                elif _file.endswith(".json"):
+                    logging.info(f"Reading {_file} as JSON")
+                    return json.load(open(_file))
+                else:
+                    raise FileNotFoundError(f"{_file} is not a valid file")
+            except Exception as e:
+                logging.error(e)
+                logging.error("Could not read file")
+        raise FileNotFoundError(f"File {_file} not found")
 
     @property
     def headers(self):
@@ -51,49 +84,13 @@ class Sarufi(object):
         if self.token.get("token"):
             return True
 
-    def bots(self) -> Union[List[Bot], Dict]:
-        """bots
-
-        Gets all user chatbots from sarufi engine
-
-        Returns:
-            Union[List[Bot], Dict]: List of chatbots if successful otherwise dict with error message
-
-        Examples:
-
-        >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('myname@domain.com', 'password')
-        2022-08-23 15:03:00,928 - root - INFO - Getting token
-        >>> sarufi.bots()
-        2022-08-23 15:03:57,845 - root - INFO - Getting bots
-        [Bot(id=4, name=iBank, description=PUT DESCRIPTION HERE), Bot(id=5, name=Maria, description=Swahili Cognitive Mental Health Chatbot)]
-
-        """
-        logging.info("Getting bots")
-        url = self.BASE_URL + "chatbots"
-        response = requests.get(url, headers=self.headers)
-        if response.status_code == 200:
-            return [Bot(bot, token=self.token) for bot in response.json()]
-        return response.json()
-
-    def get_bot(self, id: int) -> Union[Bot, Dict[Any, Any]]:
-        """get_bot
-
-        Gets a chatbot  with a specified (id) from sarufi engine
-
-        Args:
-            id (int): The ID of the chatbot to get
-
-        Returns:
-            Union[Bot, Dict[Any, Any]]: Chatbot object if bot found otherwise dict with error message
-        """
-        url = self.BASE_URL + "chatbot/" + str(id)
-        response = requests.get(url, headers=self.headers)
-        if response.status_code == 200:
-            return Bot(response.json())
-        return response.json()
-
-    def create_bot(self, name: str, description=None, flow=None, intents=None):
+    def create_bot(
+        self,
+        name: str,
+        description: str = None,
+        flow: Dict[str, Any] = None,
+        intents: Dict[str, List[str]] = None,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
         """create_bot
 
         Creates a new chatbot using sarufi engine
@@ -135,15 +132,62 @@ class Sarufi(object):
             return Bot(response.json(), token=self.token)
         return response.json()
 
-    def delete_bot(self, id: int):
-        logging.info("Deleting bot")
-        url = self.BASE_URL + f"chatbot/{id}"
-        response = requests.delete(url, headers=self.headers)
-        return response.json()
+    def create_from_file(
+        self,
+        intents: Union[Path, str] = None,
+        flow: Union[Path, str] = None,
+        metadata: Union[Path, str] = None,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
+        """create_from_file
+
+        Creates a new chatbot using sarufi engine from a file
+
+        Args:
+            intents (Union[Path, str], optional): Intent file. Defaults to None.
+            flow (Union[Path, str], optional): Flow file. Defaults to None.
+            metadata (Union[Path, str], optional): Metadata file. Defaults to None.
+
+        Returns:
+            Union[type[Bot], Dict[Any, Any]]: _description_
+        """
+
+        if intents:
+            intents = self.read_file(intents)
+        if flow:
+            flow = self.read_file(flow)
+        if metadata:
+            metadata = self.read_file(metadata)
+        else:
+            metadata = {}
+        return self.create_bot(
+            metadata.get("name", "put name here"),
+            description=metadata.get("description"),
+            intents=intents,
+            flow=flow,
+        )
 
     def update_bot(
-        self, id: int, name: str = None, description=None, intents=None, flow=None
-    ):
+        self,
+        id: int,
+        name: str = None,
+        description: str = None,
+        intents: Dict[str, List[str]] = None,
+        flow: Dict[str, Any] = None,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
+        """update_bot
+
+        Updates a chatbot with a specified (id) from sarufi engine
+
+        Args:
+            id (int): The ID of the chatbot to update
+            name (str, optional): new chatbot name. Defaults to None.
+            description (str, optional):new chatbot description . Defaults to None.
+            intents (Dict[str, List[str]], optional): updated intents . Defaults to None.
+            flow (Dict[str, Any], optional): updated flow . Defaults to None.
+
+        Returns:
+            Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot updated successfully otherwise dict with error message
+        """
         logging.info("Updating bot")
         url = self.BASE_URL + f"chatbot/{id}"
         data = json.dumps(
@@ -159,6 +203,85 @@ class Sarufi(object):
         response = requests.put(url, data=data, headers=self.headers)
         if response.status_code == 200:
             return Bot(response.json(), token=self.token)
+        return response.json()
+
+    def update_from_file(
+        self,
+        id: int,
+        intents: Union[Path, str] = None,
+        flow: Union[Path, str] = None,
+        metadata: Union[Path, str] = None,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
+        """update_from_file
+
+            Updates chatbot (intents, flow) using sarufi engine from a file
+
+        Args:
+            id (int): ID of the chatbot to update
+            intents (Union[Path, str], optional): Intent file. Defaults to None.
+            flow (Union[Path, str], optional): Flow file. Defaults to None.
+            metadata (Union[Path, str], optional): Metadata file. Defaults to None.
+
+        Returns:
+            Union[type[Bot], Dict[Any, Any]]: _description_
+        """
+
+        if intents:
+            intents = self.read_file(intents)
+        if flow:
+            flow = self.read_file(flow)
+        if metadata:
+            metadata = self.read_file(metadata)
+        else:
+            metadata = {}
+        return self.update_bot(
+            id,
+            name=metadata.get("name"),
+            intents=intents,
+            flow=flow,
+            metadata=metadata.get("description"),
+        )
+
+    def get_bot(self, id: int) -> Union[type[Bot], Dict[Any, Any]]:
+        """get_bot
+
+        Gets a chatbot  with a specified (id) from sarufi engine
+
+        Args:
+            id (int): The ID of the chatbot to get
+
+        Returns:
+            Union[Bot, Dict[Any, Any]]: Chatbot object if bot found otherwise dict with error message
+        """
+        url = self.BASE_URL + "chatbot/" + str(id)
+        response = requests.get(url, headers=self.headers)
+        if response.status_code == 200:
+            return Bot(response.json())
+        return response.json()
+
+    def bots(self) -> Union[List[type[Bot]], Dict]:
+        """bots
+
+        Gets all user chatbots from sarufi engine
+
+        Returns:
+            Union[List[Bot], Dict]: List of chatbots if successful otherwise dict with error message
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('myname@domain.com', 'password')
+        2022-08-23 15:03:00,928 - root - INFO - Getting token
+        >>> sarufi.bots()
+        2022-08-23 15:03:57,845 - root - INFO - Getting bots
+        [Bot(id=4, name=iBank, description=PUT DESCRIPTION HERE), Bot(id=5, name=Maria, description=Swahili Cognitive Mental Health Chatbot)]
+
+        """
+        logging.info("Getting bots")
+        url = self.BASE_URL + "chatbots"
+        response = requests.get(url, headers=self.headers)
+        if response.status_code == 200:
+            return [Bot(bot, token=self.token) for bot in response.json()]
         return response.json()
 
     def fetch_response(
@@ -229,6 +352,22 @@ class Sarufi(object):
         logging.error(response.json().get("message"))
         return response.json()
 
+    def delete_bot(self, id: int) -> Dict[Any, Any]:
+        """delete_bot
+
+        Deletes a chatbot with a specified (id) from sarufi engine
+
+        Args:
+            id (int): The ID of the chatbot to delete
+
+        Returns:
+            Dict[Any, Any]: Dict with error message if bot not found otherwise dict with success message
+        """
+        logging.info("Deleting bot")
+        url = self.BASE_URL + f"chatbot/{id}"
+        response = requests.delete(url, headers=self.headers)
+        return response.json()
+
 
 class Bot(Sarufi):
     """ "
@@ -294,7 +433,7 @@ class Bot(Sarufi):
             raise TypeError("flow must be a Dictionary")
 
     def __str__(self) -> str:
-        return f"Bot(id={self.id}, name={self.name}, description={self.description})"
+        return f"Bot(id={self.id}, name={self.name}"
 
     def __repr__(self) -> str:
         return self.__str__()
