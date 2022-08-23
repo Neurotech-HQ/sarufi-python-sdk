@@ -62,12 +62,6 @@ sarufi.create_bot(
 You can create your bot from a file, Here is an example on how to create your bot from a file;
 
 ```python
-
-### Update a bot from file 
-
-You can update your bot from a file as follows;
-
-```python
 from sarufi import Sarufi
 
 sarufi = Sarufi("kalebu@neurotech.africa", "xxxxxx")
@@ -138,8 +132,6 @@ if __name__ == "__main__":
 ## Using it in a conversation
 
 Here you have to know the bot ID and also specify your user unique ID;
-
-Please also see [example 01]()
 
 ```python
 >>> from sarufi import Sarufi
