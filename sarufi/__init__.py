@@ -1,3 +1,4 @@
+from __future__ import annotations
 import os
 import json
 import logging
@@ -5,7 +6,6 @@ import requests
 from uuid import uuid4
 from pathlib import Path
 from yaml import safe_load
-from __future__ import annotations
 from typing import Dict, Dict, Any, List, Optional, Union, Tuple, Callable, cast
 
 # Set up logging
@@ -42,10 +42,11 @@ class Sarufi(object):
         Returns:
             Dict[Any, Any]: Contents of the file as a dict
         """
-
+        # Get full path of file
+        _file = os.path.realpath(_file)
         if os.path.exists(_file):
             try:
-                if any(_file.endswith(ext for ext in [".yaml", ".yml"])):
+                if any([_file.endswith(ext) for ext in [".yaml", ".yml"]]):
                     logging.info(f"Reading {_file} as YAML")
                     return safe_load(open(_file))
                 elif _file.endswith(".json"):
@@ -235,11 +236,11 @@ class Sarufi(object):
         else:
             metadata = {}
         return self.update_bot(
-            id,
+            id=id,
             name=metadata.get("name"),
+            description=metadata.get("description"),
             intents=intents,
             flow=flow,
-            metadata=metadata.get("description"),
         )
 
     def get_bot(self, id: int) -> Union[type[Bot], Dict[Any, Any]]:
@@ -432,8 +433,19 @@ class Bot(Sarufi):
         else:
             raise TypeError("flow must be a Dictionary")
 
+    def respond(
+        self, message: str, message_type: str = "text", channel: str = "general"
+    ):
+        return self.chat(
+            bot_id=self.id,
+            chat_id=str(uuid4()),
+            message=message,
+            message_type=message_type,
+            channel=channel,
+        )
+
     def __str__(self) -> str:
-        return f"Bot(id={self.id}, name={self.name}"
+        return f"Bot(id={self.id}, name={self.name})"
 
     def __repr__(self) -> str:
         return self.__str__()
