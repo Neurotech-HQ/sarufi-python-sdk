@@ -31,9 +31,9 @@ Here an example on how to create your bot;
 
 ```python
 sarufi.create_bot(
-    project_name="Athony bot",
+    name="Athony bot",
     description="My bot can do a lot",
-    training_data={
+    intents={
         "salamu": ["Mambo", "Hi", "Hello", "Niaje"],
         "contact": [
             "naomba mawasiliano",
@@ -57,15 +57,40 @@ sarufi.create_bot(
 )
 ```
 
+### Creating a Bot from file
+
+You can create your bot from a file, Here is an example on how to create your bot from a file;
+
+```python
+
+### Update a bot from file 
+
+You can update your bot from a file as follows;
+
+```python
+from sarufi import Sarufi
+
+sarufi = Sarufi("kalebu@neurotech.africa", "xxxxxx")
+
+
+if __name__ == "__main__":
+    response = sarufi.create_from_file(
+        intents="data/intents.yaml",
+        flow="data/flows.yaml",
+        metadata="data/metadata.yaml",
+    )
+    print(response.data)
+```
+
 ## Updating bot
 
 Updating the bot is comparatively similar to creating a bot but this time you have to explicity specify the **project ID** of your bot.
 
 ```python
 sarufi.update_bot(
-    project_name="Athony bot",
+    name="Athony bot",
     description="My bot can do a lot",
-    training_data={
+    intents={
         "salamu": ["Mambo", "Hi", "Hello", "Niaje"],
         "contact": [
             "naomba mawasiliano",
@@ -86,8 +111,28 @@ sarufi.update_bot(
             "next": "end",
         },
     },
-    project_id=2,
+    id=2,
 )
+```
+
+### Update a bot from file
+
+You can update your bot from a file as follows;
+
+```python
+from sarufi import Sarufi
+
+sarufi = Sarufi("kalebu@neurotech.africa", "xxx")
+
+
+if __name__ == "__main__":
+    response = sarufi.update_from_file(
+        id=5,
+        intents="data/intents.yaml",
+        flow="data/flows.yaml",
+        metadata="data/metadata.yaml",
+    )
+    print(response.data)
 ```
 
 ## Using it in a conversation
@@ -97,22 +142,47 @@ Here you have to know the bot ID and also specify your user unique ID;
 Please also see [example 01]()
 
 ```python
->>> from sarufi import Sarufi 
->>> sarufi = Sarufi('kalebu@neurotech.africa', '123')
-2022-08-14 13:32:33,070 - root - INFO - Getting token
->>> sarufi.bots()
-2022-08-14 13:32:43,879 - root - INFO - Getting bots
-[Bot(id=1, name=Conversational Banking, description=Help renting places over social platforms), Bot(id=2, name=Athony bot, description=My bot can do a lot), Bot(id=3, name=Tour, description=A tour guide chatot), Bot(id=4, name=Mwalimu Bank Bot, description=Manage your Mwalimu Bank account), Bot(id=5, name=Kubeti, description=Nakusaidia kubeti), Bot(id=6, name=Retail Bot, description=Manage simple customer service conversations), Bot(id=7, name=Tigo Conversational experience, description=None), Bot(id=8, name=Booking bot, description=Manage booking processes), Bot(id=9, name=Booking Bot, description=Manage booking processes)]
->>> sarufi.chat(1, 'salio langu')
-2022-08-14 13:32:53,447 - root - INFO - Sending message to bot and returning response
-2022-08-14 13:32:54,688 - root - INFO - Status code: 200
-2022-08-14 13:32:54,688 - root - INFO - Message sent successfully
-{'message': 'Salio lako ni {}', 'next_state': 'end', 'memory': {'memory_id': '10843b3e-7e9b-4988-a5d4-cc9dbb1c5506', 'data': {'view_balance': 'salio langu'}, 'created_at': '2022-08-14T10:33:00.099377', 'updated_at': '2022-08-14T10:33:00.099384'}}
->>> sarufi.chat(1, 'toa hela')
-2022-08-14 13:33:07,612 - root - INFO - Sending message to bot and returning response
-2022-08-14 13:33:08,692 - root - INFO - Status code: 200
-2022-08-14 13:33:08,693 - root - INFO - Message sent successfully
-{'message': 'Tafadhali ingiza namba ya wakala kwa usahihi.', 'next_state': 'withdraw_money_number', 'memory': {'memory_id': '960d5d9e-62ab-45ce-981a-7bd354f83e46', 'data': {'withdraw_money': 'toa hela'}, 'created_at': '2022-08-14T10:33:14.024100', 'updated_at': '2022-08-14T10:33:14.024108'}}
+>>> from sarufi import Sarufi
+>>> sarufi = Sarufi('kalebu@neurotech.africa', 'xxx')
+2022-08-23 18:30:32,918 - root - INFO - Getting token
+>>> bots = sarufi.bots()
+2022-08-23 18:30:38,223 - root - INFO - Getting bots
+>>> bots
+[Bot(id=4, name=iBank), Bot(id=5, name=Maria)]
+>>> maria = bots[1]
+>>> maria.respond('Hi')
+2022-08-23 18:30:52,065 - root - INFO - Sending message to bot and returning response
+2022-08-23 18:30:54,126 - root - INFO - Status code: 200
+2022-08-23 18:30:54,127 - root - INFO - Message sent successfully
+{'message': [['vipi uhali gani?'], ['umeshindaje?'], ['mzima wewe?'], ['Hello! u hali gani ?'], ['Freshi nambie ?'], ['Hi, mzima wewe'], ['salama sijui wewe'], ['za kwako?'], ['Vipi hali yako'], ['Uhali gani?']]}
+>>> maria.respond("mi mzima wa afya")
+2022-08-23 18:31:02,245 - root - INFO - Sending message to bot and returning response
+2022-08-23 18:31:04,237 - root - INFO - Status code: 200
+2022-08-23 18:31:04,237 - root - INFO - Message sent successfully
+{'message': [['Ninafurahi kujua uko salama'], ['nimefurahi kusikia kutoka kwako'], ['Nipo salama pia, nimefurahi kusikia kutoka kwako'], ['Napenda kukuona ukiwa na furaha'], ['Nimefurahi kusikia hivyo'], ['Salama kabisa'], ['Mzima kabisa']]}
+```
+
+### Get a bot
+
+Query a bot by ID
+
+```python
+>>> from sarufi import Sarufi
+>>> sarufi = Sarufi('kalebu@neurotech.africa', 'xxx')
+>>> maria= sarufi.get_bot(5)
+2022-08-23 18:44:05,473 - root - INFO - Getting token
+>>> maria
+Bot(id=5, name=Maria)
+```
+
+## Deleting a bot
+
+Delete a bot by ID
+
+```python
+>>> from sarufi import Sarufi
+>>> sarufi = Sarufi('kalebu@neurotech.africa', 'xxx')
+>>> sarufi.delete_bot(5)
 ```
 
 ### Issues ?

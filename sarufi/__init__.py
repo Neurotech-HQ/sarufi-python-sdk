@@ -254,6 +254,7 @@ class Sarufi(object):
         Returns:
             Union[Bot, Dict[Any, Any]]: Chatbot object if bot found otherwise dict with error message
         """
+        logging.info("Getting bot with id: {}".format(id))
         url = self.BASE_URL + "chatbot/" + str(id)
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
