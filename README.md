@@ -47,11 +47,11 @@ sarufi.create_bot(
         "salamu": {"message": ["Hi", "Naimani upo salama"], "next": "end"},
         "contact": {
             "message": ["Ungependa kupata namba ya nani ?"],
-            "next": "chukua_namba",
+            "next_state": "chukua_namba",
         },
         "chukua_namba": {
             "message": ["Namba ya huyo mtu ni 07374734737", "Karibu tena !!"],
-            "next": "end",
+            "next_state": "end",
         },
     },
 )
@@ -98,11 +98,11 @@ sarufi.update_bot(
         "salamu": {"message": ["Hi", "Naimani upo salama"], "next": "end"},
         "contact": {
             "message": ["Ungependa kupata namba ya nani ?"],
-            "next": "chukua_namba",
+            "next_state": "chukua_namba",
         },
         "chukua_namba": {
             "message": ["Namba ya huyo mtu ni 07374734737", "Karibu tena !!"],
-            "next": "end",
+            "next_state": "end",
         },
     },
     id=2,
