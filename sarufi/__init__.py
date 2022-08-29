@@ -89,6 +89,7 @@ class Sarufi(object):
         self,
         name: str,
         description: str = None,
+        industry: str = None,
         flow: Dict[str, Any] = None,
         intents: Dict[str, List[str]] = None,
     ) -> Union[type[Bot], Dict[Any, Any]]:
@@ -125,6 +126,7 @@ class Sarufi(object):
                     "description": description,
                     "intents": intents,
                     "flows": flow,
+                    "industry": industry,
                 }
             )
         )
@@ -163,6 +165,7 @@ class Sarufi(object):
         return self.create_bot(
             metadata.get("name", "put name here"),
             description=metadata.get("description"),
+            industry=metadata.get("industry"),
             intents=intents,
             flow=flow,
         )
@@ -171,6 +174,7 @@ class Sarufi(object):
         self,
         id: int,
         name: str = None,
+        industry: str = None,
         description: str = None,
         intents: Dict[str, List[str]] = None,
         flow: Dict[str, Any] = None,
@@ -198,6 +202,7 @@ class Sarufi(object):
                     "description": description,
                     "intents": intents,
                     "flows": flow,
+                    "industry": industry,
                 }
             )
         )
@@ -238,6 +243,7 @@ class Sarufi(object):
         return self.update_bot(
             id=id,
             name=metadata.get("name"),
+            industry=metadata.get("industry"),
             description=metadata.get("description"),
             intents=intents,
             flow=flow,
@@ -397,6 +403,18 @@ class Bot(Sarufi):
             return self.update_bot(self.id, name=name)
         else:
             raise TypeError("name must be a string")
+
+    @property
+    def industry(self):
+        return self.data.get("industry")
+
+    @industry.setter
+    def industry(self, industry: str):
+        if isinstance(industry, str):
+            self.data["industry"] = industry
+            return self.update_bot(self.id, industry=industry)
+        else:
+            raise TypeError("industry must be a string")
 
     @property
     def description(self):
