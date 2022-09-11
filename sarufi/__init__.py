@@ -6,7 +6,7 @@ import requests
 from uuid import uuid4
 from pathlib import Path
 from yaml import safe_load
-from typing import Dict, Dict, Any, List, Optional, Union, Tuple, Callable, cast
+from typing import Dict, Dict, Any, List, Union
 
 # Set up logging
 logging.basicConfig(
@@ -85,6 +85,146 @@ class Sarufi(object):
         if self.token.get("token"):
             return True
 
+    def get(
+        self,
+        url: str,
+        _headers: Dict[str, str] = None,
+        retry: int = 1,
+    ):
+        """get
+
+        Simplifies making get requests
+
+        Args:
+            url (str): _description_
+            _headers (Dict[str, str], optional): Authenticated header with Bearer token. Defaults to None.
+            retry (int, optional): Number of time to rety incase token fails. Defaults to 1.
+        """
+
+        response = requests.get(url, headers=_headers or self.headers)
+        if response.status_code == 200:
+            return response
+        elif (
+            response.status_code == 400
+            and response.json().get("detail") == "Token invalid"
+        ):
+            logging.info("Token invalid[REFRESHING]")
+            self.update_token()
+            if retry > 0:
+                return self.get(url, _headers, retry=retry - 1)
+        logging.error("Error [GET]")
+        return response
+
+    def post(
+        self,
+        url: str,
+        body: Dict[str, Any],
+        _headers: Dict[str, str] = None,
+        retry: int = 1,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
+        """post
+
+        Simplifies the process of making a post request to sarufi engine
+
+        Args:
+            url (str): URL to make the request to
+            body (Dict[str, Any]): Body of the request
+            _headers (Dict[str, str], optional): Request headers. Defaults to None.
+            retry (int, optional): Number of time to retry when tokens are invalid . Defaults to 1.
+
+        Returns:
+            Union[type[Bot], Dict[Any, Any]]: Bot object if request is successful otherwise dict with error message
+        """
+
+        _data = json.dumps(self.strip_of_nones(body))  # remove None values
+        _headers = _headers or self.headers
+        response = requests.post(url, data=_data, headers=_headers)
+        if response.status_code == 200:
+            return response
+
+        elif (
+            response.status_code == 400
+            and response.json().get("detail") == "Token invalid"
+        ):
+            logging.info("Token invalid[REFRESHING]")
+            self.update_token()  # Refresh token
+            if retry > 0:
+                return self.post(body, url, _headers, retry=retry - 1)  # Retry
+
+        logging.error("Error [POST]")
+        return response
+
+    def put(
+        self,
+        url: str,
+        body: Dict[str, Any],
+        _headers: Dict[str, str] = None,
+        retry: int = 1,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
+        """put
+
+        Simplifies the process of making a put request to sarufi engine
+
+        Args:
+            url (str): URL to make the request to
+            body (Dict[str, Any]): Body of the request
+            _headers (Dict[str, str], optional): Request headers. Defaults to None.
+            retry (int, optional): Number of time to retry when tokens are invalid . Defaults to 1.
+
+        Returns:
+            Union[type[Bot], Dict[Any, Any]]: Bot object if request is successful otherwise dict with error message
+        """
+
+        _data = json.dumps(self.strip_of_nones(body))
+        _headers = _headers or self.headers
+        response = requests.put(url, data=_data, headers=_headers)
+        if response.status_code == 200:
+            return response
+        elif (
+            response.status_code == 400
+            and response.json().get("detail") == "Token invalid"
+        ):
+            logging.info("Token invalid[REFRESHING]")
+            self.update_token()
+            if retry > 0:
+                return self.put(body, url, _headers, retry=retry - 1)
+        logging.error("Error [PUT]")
+        return response
+
+    def delete(
+        self,
+        url: str,
+        _headers: Dict[str, str] = None,
+        retry: int = 1,
+    ) -> Union[type[Bot], Dict[Any, Any]]:
+        """delete
+
+        Simplifies the process of making a delete request to sarufi engine
+
+        Args:
+            url (str): URL to make the request to
+            _headers (Dict[str, str], optional): Request headers. Defaults to None.
+            retry (int, optional): Number of time to retry when tokens are invalid . Defaults to 1.
+
+        Returns:
+            Union[type[Bot], Dict[Any, Any]]: Bot object if request is successful otherwise dict with error message
+        """
+
+        _headers = _headers or self.headers
+        response = requests.delete(url, headers=_headers)
+        if response.status_code == 200:
+            return response
+        elif (
+            response.status_code == 400
+            and response.json().get("detail") == "Token invalid"
+        ):
+            logging.info("Token invalid[REFRESHING]")
+            self.update_token()
+            if retry > 0:
+                return self.delete(url, _headers, retry=retry - 1)
+        logging.error("Error [DELETE]")
+        return response
+
     def create_bot(
         self,
         name: str,
@@ -119,18 +259,14 @@ class Sarufi(object):
 
         logging.info("Creating bot")
         url = self.BASE_URL + "chatbot"
-        data = json.dumps(
-            self.strip_of_nones(
-                {
-                    "name": name,
-                    "description": description,
-                    "intents": intents,
-                    "flows": flow,
-                    "industry": industry,
-                }
-            )
-        )
-        response = requests.post(url, data=data, headers=self.headers)
+        data = {
+            "name": name,
+            "description": description,
+            "intents": intents,
+            "flows": flow,
+            "industry": industry,
+        }
+        response = self.post(body=data, url=url)
         if response.status_code == 200:
             return Bot(response.json(), token=self.token)
         return response.json()
@@ -195,18 +331,14 @@ class Sarufi(object):
         """
         logging.info("Updating bot")
         url = self.BASE_URL + f"chatbot/{id}"
-        data = json.dumps(
-            self.strip_of_nones(
-                {
-                    "name": name,
-                    "description": description,
-                    "intents": intents,
-                    "flows": flow,
-                    "industry": industry,
-                }
-            )
-        )
-        response = requests.put(url, data=data, headers=self.headers)
+        data = {
+            "name": name,
+            "description": description,
+            "intents": intents,
+            "flows": flow,
+            "industry": industry,
+        }
+        response = self.put(body=data, url=url)
         if response.status_code == 200:
             return Bot(response.json(), token=self.token)
         return response.json()
@@ -262,7 +394,7 @@ class Sarufi(object):
         """
         logging.info("Getting bot with id: {}".format(id))
         url = self.BASE_URL + "chatbot/" + str(id)
-        response = requests.get(url, headers=self.headers)
+        response = self.get(url=url)
         if response.status_code == 200:
             return Bot(response.json())
         return response.json()
@@ -287,7 +419,7 @@ class Sarufi(object):
         """
         logging.info("Getting bots")
         url = self.BASE_URL + "chatbots"
-        response = requests.get(url, headers=self.headers)
+        response = self.get(url=url)
         if response.status_code == 200:
             return [Bot(bot, token=self.token) for bot in response.json()]
         return response.json()
@@ -300,15 +432,13 @@ class Sarufi(object):
             logging.info("Sending message to bot via whatsapp")
             url = url + "whatsapp/"
 
-        data = json.dumps(
-            {
-                "chat_id": chat_id,
-                "bot_id": bot_id,
-                "message": message,
-                "message_type": message_type,
-            }
-        )
-        return requests.post(url, data=data, headers=self.headers)
+        data = {
+            "chat_id": chat_id,
+            "bot_id": bot_id,
+            "message": message,
+            "message_type": message_type,
+        }
+        return self.post(url=url, body=data)
 
     def chat(
         self,
@@ -342,22 +472,8 @@ class Sarufi(object):
         if response.status_code == 200:
             logging.info("Message sent successfully")
             return response.json()
-        elif (
-            response.status_code == 401
-            and response.json().get("message") == "Not authenticated"
-        ):
-            logging.info("Token expired, updating token")
-            self.token = self.get_token()
-            if self.token.get("token"):
-                logging.info("Token updated successfully")
-                logging.info("Sending message to bot and returning response:again")
-                return self.fetch_response(
-                    bot_id=bot_id,
-                    chat_id=chat_id,
-                    message=message,
-                    message_type=message_type,
-                ).json()
-        logging.error(response.json().get("message"))
+
+        logging.error("Message not sent[CHAT]")
         return response.json()
 
     def delete_bot(self, id: int) -> Dict[Any, Any]:
@@ -373,7 +489,7 @@ class Sarufi(object):
         """
         logging.info("Deleting bot")
         url = self.BASE_URL + f"chatbot/{id}"
-        response = requests.delete(url, headers=self.headers)
+        response = self.delete(url=url)
         return response.json()
 
 
@@ -400,7 +516,8 @@ class Bot(Sarufi):
     def name(self, name: str):
         if isinstance(name, str):
             self.data["name"] = name
-            return self.update_bot(self.id, name=name)
+            r = self.update_bot(id=self.id, name=name)
+            logging.info(r)
         else:
             raise TypeError("name must be a string")
 
@@ -412,7 +529,8 @@ class Bot(Sarufi):
     def industry(self, industry: str):
         if isinstance(industry, str):
             self.data["industry"] = industry
-            return self.update_bot(self.id, industry=industry)
+            r = self.update_bot(self.id, industry=industry)
+            logging.info(r)
         else:
             raise TypeError("industry must be a string")
 
@@ -424,7 +542,8 @@ class Bot(Sarufi):
     def description(self, description: str):
         if isinstance(description, str):
             self.data["description"] = description
-            return self.update_bot(self.id, description=description)
+            r = self.update_bot(self.id, description=description)
+            logging.info(r)
         else:
             raise TypeError("description must be a string")
 
@@ -436,7 +555,8 @@ class Bot(Sarufi):
     def intents(self, intents: Dict):
         if isinstance(intents, dict):
             self.data["intents"] = intents
-            return self.update_bot(self.id, intents=intents)
+            r = self.update_bot(self.id, intents=intents)
+            logging.info(r)
         else:
             raise TypeError("intents must be a Dictionary")
 
@@ -448,7 +568,8 @@ class Bot(Sarufi):
     def flow(self, flow: Dict):
         if isinstance(flow, dict):
             self.data["flows"] = flow
-            return self.update_bot(self.id, flow=flow)
+            r = self.update_bot(self.id, flow=flow)
+            logging.info(r)
         else:
             raise TypeError("flow must be a Dictionary")
 
