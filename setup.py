@@ -3,18 +3,18 @@ from setuptools import setup
 
 # read the contents of your description file
 
-# this_directory = path.abspath(path.dirname(__file__))
-# with open(path.join(this_directory, "description.md"), encoding="utf-8") as f:
-#     long_description = f.read()
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, "description.md"), encoding="utf-8") as f:
+    long_description = f.read()
 
 setup(
     name="sarufi",
-    version="0.0.2",
+    version="0.0.3",
     description="Opensource python wrapper to Sarufi Conversation API",
-    # long_description=long_description,
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/Neurotech-HQ/sarufi-python-sdk",
-    download_url="https://github.com/Neurotech-HQ/sarufi-python-sdk/archive/refs/tags/v0.0.1.tar.gz",
+    download_url="https://github.com/Neurotech-HQ/sarufi-python-sdk/archive/refs/tags/v0.0.2.tar.gz",
     author="Jordan Kalebu",
     author_email="isaackeinstein@gmail.com",
     license="MIT",
