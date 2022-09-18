@@ -3,7 +3,7 @@ from uuid import uuid4
 from sarufi import Sarufi
 
 # initialize the bot
-sarufi = Sarufi("kalebu@neurotech.africa", "123")
+sarufi = Sarufi("testing@gmail.com", "xxx")
 
 
 def update_bot():
@@ -56,16 +56,3 @@ if __name__ == "__main__":
     bot_id = int(bot_id) if bot_id.isdigit() else 1
     print(f"bot id: {bot_id}")
     chat(bot_id=bot_id)
-
-
-# cancel_intent = {
-#     "cancel": [
-#         "cancel",
-#         "cancel it",
-#         "cancel it please",
-#         "acha",
-#         "acha sasa",
-#         "I changed my mind, cancel it",
-#         "I changed my mind, cancel it please",
-#     ]
-# }

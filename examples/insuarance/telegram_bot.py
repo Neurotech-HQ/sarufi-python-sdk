@@ -12,7 +12,7 @@ from telegram.ext import (
     CallbackContext,
 )
 
-updater = Updater("5539985581:AAGwHSY4Phn3ORD7Xac8sNDj-eHlam8wvA8")
+updater = Updater("token", use_context=True)
 mybot = updater.dispatcher
 
 # initialize the logger
