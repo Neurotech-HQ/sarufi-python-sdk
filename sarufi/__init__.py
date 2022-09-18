@@ -396,7 +396,7 @@ class Sarufi(object):
         url = self.BASE_URL + "chatbot/" + str(id)
         response = self.get(url=url)
         if response.status_code == 200:
-            return Bot(response.json())
+            return Bot(response.json(), token=self.token)
         return response.json()
 
     def bots(self) -> Union[List[type[Bot]], Dict]:
@@ -561,6 +561,31 @@ class Bot(Sarufi):
         else:
             raise TypeError("intents must be a Dictionary")
 
+    def add_intent(self, intents: Dict[str, List[str]]):
+        """add_intent
+
+        Appends an intent to the bot's intents
+
+        Args:
+            intents (Dict[str, List[str]]): The intents to add
+
+        Raises:
+            TypeError: If intent is not a dictionary
+
+        Examples:
+            >>> from sarufi import Sarufi
+            >>> sarufi = Sarufi('testing@gmail.com', '123')
+            >>> chatbot = sarufi.get_bot(1)
+            >>> chatbot.add_intent({'greeting': ['hello', 'hi']})
+        """
+        if isinstance(intents, dict):
+            updated_intents = self.intents
+            updated_intents.update(intents)
+            self.intents = updated_intents
+            logging.info(f'A new intents "{list(intents.keys())}" has been added')
+        else:
+            raise TypeError("intent must be a dictionary {intent_name: [utterances]}")
+
     @property
     def flow(self):
         return self.data.get("flows")
@@ -573,6 +598,31 @@ class Bot(Sarufi):
             logging.info(r)
         else:
             raise TypeError("flow must be a Dictionary")
+
+    def add_flow(self, flow: Dict[str, Any]):
+        """add_flow
+
+        Appends a flow to the bot's flows
+
+        Args:
+            flow (Dict[str, Any]): The flow to add
+
+        Raises:
+            TypeError: If flow is not a dictionary
+
+        Examples:
+            >>> from sarufi import Sarufi
+            >>> sarufi = Sarufi('testing@gmail.com', '123')
+            >>> sarufi.get_bot(1)
+            >>> chatbot.add_flow({'greeting': {'message': ['hello'], 'next_state': 'greeting'}})
+        """
+        if isinstance(flow, dict):
+            updated_flows = self.flow
+            updated_flows.update(flow)
+            self.flow = updated_flows
+            logging.info(f'A new flow "{list(flow.keys())}" has been added')
+        else:
+            raise TypeError("flow must be a dictionary {flow_name: flow_data}")
 
     def respond(
         self,
