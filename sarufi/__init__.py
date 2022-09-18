@@ -503,6 +503,7 @@ class Bot(Sarufi):
     def __init__(self, data: Dict, token=None):
         super().__init__(token=token)
         self.data = data
+        self.chat_id = str(uuid4())
 
     @property
     def id(self):
@@ -574,11 +575,15 @@ class Bot(Sarufi):
             raise TypeError("flow must be a Dictionary")
 
     def respond(
-        self, message: str, message_type: str = "text", channel: str = "general"
+        self,
+        message: str,
+        message_type: str = "text",
+        channel: str = "general",
+        chat_id: str = None,
     ):
         return self.chat(
             bot_id=self.id,
-            chat_id=str(uuid4()),
+            chat_id=chat_id or self.chat_id,
             message=message,
             message_type=message_type,
             channel=channel,
