@@ -2,6 +2,10 @@
 
 # sarufi-python-sdk
 
+[![Downloads](https://pepy.tech/badge/sarufi)](https://pepy.tech/project/sarufi)
+[![Downloads](https://pepy.tech/badge/sarufi/month)](https://pepy.tech/project/sarufi)
+[![Downloads](https://pepy.tech/badge/sarufi/week)](https://pepy.tech/project/sarufi)
+
 Sarufi Python SDK to help you interact with SARUFI platform
 
 ## Installation
