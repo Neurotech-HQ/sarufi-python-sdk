@@ -232,6 +232,7 @@ class Sarufi(object):
         industry: str = None,
         flow: Dict[str, Any] = None,
         intents: Dict[str, List[str]] = None,
+        visible_on_community: bool = None,
     ) -> Union[type[Bot], Dict[Any, Any]]:
         """create_bot
 
@@ -265,6 +266,7 @@ class Sarufi(object):
             "intents": intents,
             "flows": flow,
             "industry": industry,
+            "visible_on_community": visible_on_community,
         }
         response = self.post(body=data, url=url)
         if response.status_code == 200:
@@ -302,6 +304,7 @@ class Sarufi(object):
             metadata.get("name", "put name here"),
             description=metadata.get("description"),
             industry=metadata.get("industry"),
+            visible_on_community=metadata.get("visible_on_community"),
             intents=intents,
             flow=flow,
         )
@@ -314,6 +317,7 @@ class Sarufi(object):
         description: str = None,
         intents: Dict[str, List[str]] = None,
         flow: Dict[str, Any] = None,
+        visible_on_community: bool = None,
     ) -> Union[type[Bot], Dict[Any, Any]]:
         """update_bot
 
@@ -337,6 +341,7 @@ class Sarufi(object):
             "intents": intents,
             "flows": flow,
             "industry": industry,
+            "visible_on_community": visible_on_community,
         }
         response = self.put(body=data, url=url)
         if response.status_code == 200:
@@ -377,6 +382,7 @@ class Sarufi(object):
             name=metadata.get("name"),
             industry=metadata.get("industry"),
             description=metadata.get("description"),
+            visible_on_community=metadata.get("visible_on_community"),
             intents=intents,
             flow=flow,
         )
@@ -547,6 +553,19 @@ class Bot(Sarufi):
             logging.info(r)
         else:
             raise TypeError("description must be a string")
+
+    @property
+    def visible_on_community(self):
+        return self.data.get("visible_on_community")
+
+    @visible_on_community.setter
+    def visible_on_community(self, visible_on_community: bool):
+        if isinstance(visible_on_community, bool):
+            self.data["visible_on_community"] = visible_on_community
+            r = self.update_bot(self.id, visible_on_community=visible_on_community)
+            logging.info(r)
+        else:
+            raise TypeError("visible_on_community must be a boolean")
 
     @property
     def intents(self):
