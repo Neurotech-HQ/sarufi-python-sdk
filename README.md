@@ -8,6 +8,17 @@
 
 Sarufi Python SDK to help you interact with SARUFI platform
 
+## Table of Contents
+- [Installation](#installation)  
+- [Authentication](#authentication)  
+- [Creating a Bot](#creating-a-bot)  
+    - [Creating a Bot from file](#creating-a-bot-from-file)  
+- [Updating bot](#updating-bot)     
+    - [Update a bot from file](#update-a-bot-from-file)  
+- [Using it in a conversation](#using-it-in-a-conversation)    
+    - [Get a bot](#get-a-bot)  
+- [Deleting a bot](#deleting-a-bot) 
+
 ## Installation
 
 Make sure you have [sarufi package](https://github.com/Neurotech-HQ/sarufi-python-sdk) installed on your machine before launching your telegram bot, you can easily install by the following command;
