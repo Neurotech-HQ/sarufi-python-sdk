@@ -1,3 +1,11 @@
+"""
+**Sarufi** is a python SDK for the [Sarufi Conversational AI Platform](https://sarufi.io/).
+
+To get started with Sarufi, you need to create an account at [sarufi.io](https://sarufi.io/).
+
+Here an article that explains how to get started with Sarufi: [getting-started-with-sarufi](https://blog.neurotech.africa/what-is-sarufi/)
+
+"""
 from __future__ import annotations
 import os
 import json
@@ -6,7 +14,7 @@ import requests
 from uuid import uuid4
 from pathlib import Path
 from yaml import safe_load
-from typing import Dict, Dict, Any, List, Union
+from typing import Dict, Dict, Any, List, Union, Optional
 
 # Set up logging
 logging.basicConfig(
@@ -15,23 +23,71 @@ logging.basicConfig(
 
 
 class Sarufi(object):
-    BASE_URL = "https://api.sarufi.io/"
+    """Sarufi Class"""
 
-    def __init__(self, username=None, password=None, token=None):
-        self.username = username
-        self.password = password
+    _BASE_URL: str = "https://api.sarufi.io/"
+
+    def __init__(
+        self,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        token: Optional[str] = None,
+    ) -> None:
+        """Initialize the Sarufi class with username and password or token
+
+
+        Args:
+            username (Optional[str], optional): Sarufi API username. Defaults to None.
+            password (Optional[str], optional): Sarufi API password. Defaults to None.
+            token (Optional[str], optional): Sarufi API token. Defaults to None.
+
+        Examples:
+
+        >>> sarufi = Sarufi(username="username", password="password")
+        >>> dir(sarufi)
+                [
+                    "...",
+                    "bots",
+                    "chat",
+                    "create_bot",
+                    "create_from_file",
+                    "delete_bot",
+                    "_fetch_response",
+                    "get_bot",
+                    "headers",
+                    "token",
+                    "update_bot",
+                    "update_from_file",
+                ]
+        """
+        self.__username = username
+        self.__password = password
         if token:
             self.token = token
         else:
-            self.token = self.get_token()
+            self.token = self.__get_token()
+
+    def __get_token(self):
+        logging.info("Getting token")
+        url = self._BASE_URL + "users/login"
+        data = json.dumps({"username": self.__username, "password": self.__password})
+        response = requests.post(
+            url, data=data, headers={"Content-Type": "application/json"}
+        )
+        return response.json()
+
+    def __update_token(self):
+        self.token = self.__get_token()
+        if self.token.get("token"):
+            return True
 
     @staticmethod
-    def strip_of_nones(data: Dict):
+    def __strip_of_nones(data: Dict):
         return {k: v for k, v in data.items() if v is not None}
 
     @staticmethod
-    def read_file(_file: Union[Path, str]) -> Dict[Any, Any]:
-        """read_file
+    def _read_file(_file: Union[Path, str]) -> Dict[Any, Any]:
+        """_read_file
             Reads a file and returns the contents as a dict
         Args:
             _file (Union[Path, str]): File to read(path or filename) | (intents, flows)
@@ -71,21 +127,7 @@ class Sarufi(object):
             logging.error(self.token.get("message"))
             logging.error("Please check your credentials\nand try again")
 
-    def get_token(self):
-        logging.info("Getting token")
-        url = self.BASE_URL + "users/login"
-        data = json.dumps({"username": self.username, "password": self.password})
-        response = requests.post(
-            url, data=data, headers={"Content-Type": "application/json"}
-        )
-        return response.json()
-
-    def update_token(self):
-        self.token = self.get_token()
-        if self.token.get("token"):
-            return True
-
-    def get(
+    def _get_req(
         self,
         url: str,
         _headers: Dict[str, str] = None,
@@ -109,13 +151,13 @@ class Sarufi(object):
             and response.json().get("detail") == "Token invalid"
         ):
             logging.info("Token invalid[REFRESHING]")
-            self.update_token()
+            self.__update_token()
             if retry > 0:
-                return self.get(url, _headers, retry=retry - 1)
+                return self._get_req(url, _headers, retry=retry - 1)
         logging.error("Error [GET]")
         return response
 
-    def post(
+    def _post_req(
         self,
         url: str,
         body: Dict[str, Any],
@@ -136,7 +178,7 @@ class Sarufi(object):
             Union[type[Bot], Dict[Any, Any]]: Bot object if request is successful otherwise dict with error message
         """
 
-        _data = json.dumps(self.strip_of_nones(body))  # remove None values
+        _data = json.dumps(self.__strip_of_nones(body))  # remove None values
         _headers = _headers or self.headers
         response = requests.post(url, data=_data, headers=_headers)
         if response.status_code == 200:
@@ -147,14 +189,14 @@ class Sarufi(object):
             and response.json().get("detail") == "Token invalid"
         ):
             logging.info("Token invalid[REFRESHING]")
-            self.update_token()  # Refresh token
+            self.__update_token()  # Refresh token
             if retry > 0:
-                return self.post(body, url, _headers, retry=retry - 1)  # Retry
+                return self._post_req(body, url, _headers, retry=retry - 1)  # Retry
 
         logging.error("Error [POST]")
         return response
 
-    def put(
+    def _put_req(
         self,
         url: str,
         body: Dict[str, Any],
@@ -175,7 +217,7 @@ class Sarufi(object):
             Union[type[Bot], Dict[Any, Any]]: Bot object if request is successful otherwise dict with error message
         """
 
-        _data = json.dumps(self.strip_of_nones(body))
+        _data = json.dumps(self.__strip_of_nones(body))
         _headers = _headers or self.headers
         response = requests.put(url, data=_data, headers=_headers)
         if response.status_code == 200:
@@ -185,13 +227,13 @@ class Sarufi(object):
             and response.json().get("detail") == "Token invalid"
         ):
             logging.info("Token invalid[REFRESHING]")
-            self.update_token()
+            self.__update_token()
             if retry > 0:
-                return self.put(body, url, _headers, retry=retry - 1)
+                return self._put_req(body, url, _headers, retry=retry - 1)
         logging.error("Error [PUT]")
         return response
 
-    def delete(
+    def _delete_req(
         self,
         url: str,
         _headers: Dict[str, str] = None,
@@ -219,9 +261,9 @@ class Sarufi(object):
             and response.json().get("detail") == "Token invalid"
         ):
             logging.info("Token invalid[REFRESHING]")
-            self.update_token()
+            self.__update_token()
             if retry > 0:
-                return self.delete(url, _headers, retry=retry - 1)
+                return self._delete_req(url, _headers, retry=retry - 1)
         logging.error("Error [DELETE]")
         return response
 
@@ -236,7 +278,7 @@ class Sarufi(object):
     ) -> Union[type[Bot], Dict[Any, Any]]:
         """create_bot
 
-        Creates a new chatbot using sarufi engine
+        Creates a new chatbot using `sarufi API`
 
         Args:
             name (str): Name of the chatbot
@@ -259,7 +301,7 @@ class Sarufi(object):
         """
 
         logging.info("Creating bot")
-        url = self.BASE_URL + "chatbot"
+        url = self._BASE_URL + "chatbot"
         data = {
             "name": name,
             "description": description,
@@ -268,7 +310,7 @@ class Sarufi(object):
             "industry": industry,
             "visible_on_community": visible_on_community,
         }
-        response = self.post(body=data, url=url)
+        response = self._post_req(body=data, url=url)
         if response.status_code == 200:
             return Bot(response.json(), token=self.token)
         return response.json()
@@ -289,15 +331,24 @@ class Sarufi(object):
             metadata (Union[Path, str], optional): Metadata file. Defaults to None.
 
         Returns:
-            Union[type[Bot], Dict[Any, Any]]: _description_
-        """
+            Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot created successfully otherwise dict with error message
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> bot = sarufi.create_from_file(
+        ...     intents='data/intents.json',
+        ...     flow='data/flow.json',
+        ...     metadata='data/metadata.json'
+            )"""
 
         if intents:
-            intents = self.read_file(intents)
+            intents = self._read_file(intents)
         if flow:
-            flow = self.read_file(flow)
+            flow = self._read_file(flow)
         if metadata:
-            metadata = self.read_file(metadata)
+            metadata = self._read_file(metadata)
         else:
             metadata = {}
         return self.create_bot(
@@ -332,9 +383,23 @@ class Sarufi(object):
 
         Returns:
             Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot updated successfully otherwise dict with error message
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> bot = sarufi.update_bot(
+            ...     id=5,
+            ...     name='Maria',
+            ...     description='A chatbot that does this and that',
+            ...     intents={...},
+            ...     flow={...},
+            ...     industry='healthcare',
+            ...     visible_on_community=True
+            ... )
         """
         logging.info("Updating bot")
-        url = self.BASE_URL + f"chatbot/{id}"
+        url = self._BASE_URL + f"chatbot/{id}"
         data = {
             "name": name,
             "description": description,
@@ -343,7 +408,7 @@ class Sarufi(object):
             "industry": industry,
             "visible_on_community": visible_on_community,
         }
-        response = self.put(body=data, url=url)
+        response = self._put_req(body=data, url=url)
         if response.status_code == 200:
             return Bot(response.json(), token=self.token)
         return response.json()
@@ -366,15 +431,26 @@ class Sarufi(object):
             metadata (Union[Path, str], optional): Metadata file. Defaults to None.
 
         Returns:
-            Union[type[Bot], Dict[Any, Any]]: _description_
+            Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot updated successfully otherwise dict with error message
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> bot = sarufi.update_from_file(
+            ...     id=5,
+            ...     intents='data/intents.json',
+            ...     flow='data/flow.json',
+            ...     metadata='data/metadata.json'
+            ... )
         """
 
         if intents:
-            intents = self.read_file(intents)
+            intents = self._read_file(intents)
         if flow:
-            flow = self.read_file(flow)
+            flow = self._read_file(flow)
         if metadata:
-            metadata = self.read_file(metadata)
+            metadata = self._read_file(metadata)
         else:
             metadata = {}
         return self.update_bot(
@@ -397,10 +473,18 @@ class Sarufi(object):
 
         Returns:
             Union[Bot, Dict[Any, Any]]: Chatbot object if bot found otherwise dict with error message
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> bot = sarufi.get_bot(id=5)
+        >>> print(bot)
+        Bot(name='iBank', id=23)
         """
         logging.info("Getting bot with id: {}".format(id))
-        url = self.BASE_URL + "chatbot/" + str(id)
-        response = self.get(url=url)
+        url = self._BASE_URL + "chatbot/" + str(id)
+        response = self._get_req(url=url)
         if response.status_code == 200:
             return Bot(response.json(), token=self.token)
         return response.json()
@@ -424,16 +508,16 @@ class Sarufi(object):
 
         """
         logging.info("Getting bots")
-        url = self.BASE_URL + "chatbots"
-        response = self.get(url=url)
+        url = self._BASE_URL + "chatbots"
+        response = self._get_req(url=url)
         if response.status_code == 200:
             return [Bot(bot, token=self.token) for bot in response.json()]
         return response.json()
 
-    def fetch_response(
+    def _fetch_response(
         self, bot_id: int, chat_id: str, message: str, message_type: str, channel: str
     ):
-        url = self.BASE_URL + "conversation/"
+        url = self._BASE_URL + "conversation/"
         if channel == "whatsapp":
             logging.info("Sending message to bot via whatsapp")
             url = url + "whatsapp/"
@@ -444,7 +528,7 @@ class Sarufi(object):
             "message": message,
             "message_type": message_type,
         }
-        return self.post(url=url, body=data)
+        return self._post_req(url=url, body=data)
 
     def chat(
         self,
@@ -467,7 +551,7 @@ class Sarufi(object):
             response (json): bot response
         """
         logging.info("Sending message to bot and returning response")
-        response = self.fetch_response(
+        response = self._fetch_response(
             bot_id=bot_id,
             chat_id=chat_id,
             message=message,
@@ -492,18 +576,65 @@ class Sarufi(object):
 
         Returns:
             Dict[Any, Any]: Dict with error message if bot not found otherwise dict with success message
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your-email', 'your-password')
+        >>> sarufi.delete_bot(5)
+        {'message': 'Bot with ID 5 deleted successfully'}
         """
         logging.info("Deleting bot")
-        url = self.BASE_URL + f"chatbot/{id}"
-        response = self.delete(url=url)
+        url = self._BASE_URL + f"chatbot/{id}"
+        response = self._delete_req(url=url)
         return response.json()
 
 
 class Bot(Sarufi):
-    """ "
+    """
     BOT OBJECT
 
-    Helper functions to access bot data in easy way
+    has `Helper` functions to access bot data in easy way
+
+    Examples:
+
+    >>> from sarufi import Sarufi
+    >>> sarufi = Sarufi('your_email', 'your_password')
+    >>> bot = sarufi.get_bot(4)
+
+    ### Get bot name
+    >>> bot.name
+    'iBank'
+
+    ### Get bot description
+    >>> bot.description
+    'I simulate a bank chatbot'
+
+    ### Get bot industry
+    >>> bot.industry
+
+    ### Get bot intents
+    >>> bot.intents
+
+    ### Get bot flow
+    >>> bot.flow
+
+    ### Get bot id
+    >>> bot.id
+    32
+
+    ## You can also get bot data as a dict
+
+    >>> bot.data
+    {...}
+
+    You can also quickly update bot data from name to intents and flows
+
+    ### Update bot name
+    >>> bot.name = 'New name'
+
+    ### Update bot description
+    >>> bot.description = 'New description'
     """
 
     def __init__(self, data: Dict, token=None):
@@ -592,10 +723,11 @@ class Bot(Sarufi):
             TypeError: If intent is not a dictionary
 
         Examples:
-            >>> from sarufi import Sarufi
-            >>> sarufi = Sarufi('testing@gmail.com', '123')
-            >>> chatbot = sarufi.get_bot(1)
-            >>> chatbot.add_intent({'greeting': ['hello', 'hi']})
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('testing@gmail.com', '123')
+        >>> chatbot = sarufi.get_bot(1)
+        >>> chatbot.add_intent({'greeting': ['hello', 'hi']})
         """
         if isinstance(intents, dict):
             updated_intents = self.intents
@@ -630,10 +762,11 @@ class Bot(Sarufi):
             TypeError: If flow is not a dictionary
 
         Examples:
-            >>> from sarufi import Sarufi
-            >>> sarufi = Sarufi('testing@gmail.com', '123')
-            >>> sarufi.get_bot(1)
-            >>> chatbot.add_flow({'greeting': {'message': ['hello'], 'next_state': 'greeting'}})
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('testing@gmail.com', '123')
+        >>> sarufi.get_bot(1)
+        >>> chatbot.add_flow({'greeting': {'message': ['hello'], 'next_state': 'greeting'}})
         """
         if isinstance(flow, dict):
             updated_flows = self.flow
@@ -649,7 +782,26 @@ class Bot(Sarufi):
         message_type: str = "text",
         channel: str = "general",
         chat_id: str = None,
-    ):
+    ) -> (Dict | None):
+        """respond to a message
+
+        Args:
+            message (str): The message to send
+            message_type (str, optional): The type of message. Defaults to "text".
+            channel (str, optional): The channel to send the message to. Defaults to "general".
+            chat_id (str, optional): The chat id to send the message to. Defaults to None.
+
+        Returns:
+            Dict | None: The response from the bot
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> chatbot = sarufi.get_bot(1)
+        >>> chatbot.respond('hello')
+        {'message': ['Hello, how can I help you?'], 'next_state': 'greeting'}
+        """
         return self.chat(
             bot_id=self.id,
             chat_id=chat_id or self.chat_id,
@@ -657,6 +809,19 @@ class Bot(Sarufi):
             message_type=message_type,
             channel=channel,
         )
+
+    def delete(self):
+        """
+        delete the bot with the given id
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your-email', 'your-password')
+        >>> chatbot = sarufi.get_bot(1)
+        >>> chatbot.delete()
+        """
+        return self.delete_bot(self.id)
 
     def __str__(self) -> str:
         return f"Bot(id={self.id}, name={self.name})"
