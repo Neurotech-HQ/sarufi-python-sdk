@@ -195,7 +195,9 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()  # Refresh token
             if retry > 0:
-                return self._post_req(body, url, _headers, retry=retry - 1)  # Retry
+                return self._post_req(
+                    body=body, url=url, _headers=_headers, retry=retry - 1
+                )  # Retry
 
         logging.error("Error [POST]")
         return response
