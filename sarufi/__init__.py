@@ -82,8 +82,12 @@ class Sarufi(object):
             return True
 
     @staticmethod
-    def __strip_of_nones(data: Dict):
-        return {k: v for k, v in data.items() if v is not None}
+    def __strip_of_nones(data: Dict[str, str]):
+        if isinstance(data, dict):
+            return {k: v for k, v in data.items() if v is not None}
+        logging.error("Data is not a dict")
+        logging.error(data)
+        logging.error(type(data))
 
     @staticmethod
     def _read_file(_file: Union[Path, str]) -> Dict[Any, Any]:
