@@ -150,9 +150,9 @@ class Sarufi(object):
         response = requests.get(url, headers=_headers or self.headers)
         if response.status_code == 200:
             return response
-        elif (
-            response.status_code == 400
-            and response.json().get("detail") == "Token invalid"
+        elif response.status_code == 400 and (
+            response.json().get("detail") == "Token invalid"
+            or response.json().get("detail") == "Token Expired"
         ):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
@@ -188,9 +188,9 @@ class Sarufi(object):
         if response.status_code == 200:
             return response
 
-        elif (
-            response.status_code == 400
-            and response.json().get("detail") == "Token invalid"
+        elif response.status_code == 400 and (
+            response.json().get("detail") == "Token invalid"
+            or response.json().get("detail") == "Token Expired"
         ):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()  # Refresh token
@@ -228,9 +228,9 @@ class Sarufi(object):
         response = requests.put(url, data=_data, headers=_headers)
         if response.status_code == 200:
             return response
-        elif (
-            response.status_code == 400
-            and response.json().get("detail") == "Token invalid"
+        elif response.status_code == 400 and (
+            response.json().get("detail") == "Token invalid"
+            or response.json().get("detail") == "Token Expired"
         ):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
@@ -262,9 +262,9 @@ class Sarufi(object):
         response = requests.delete(url, headers=_headers)
         if response.status_code == 200:
             return response
-        elif (
-            response.status_code == 400
-            and response.json().get("detail") == "Token invalid"
+        elif response.status_code == 400 and (
+            response.json().get("detail") == "Token invalid"
+            or response.json().get("detail") == "Token Expired"
         ):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
