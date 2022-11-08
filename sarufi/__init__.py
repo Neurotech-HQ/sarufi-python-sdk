@@ -80,6 +80,7 @@ class Sarufi(object):
         self.token = self.__get_token()
         if self.token.get("token"):
             return True
+        logging.error("Error updating token")
 
     @staticmethod
     def __strip_of_nones(data: Dict[str, str]):
@@ -157,7 +158,7 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
             if retry > 0:
-                return self._get_req(url, _headers, retry=retry - 1)
+                return self._get_req(url=url, _headers=_headers, retry=retry - 1)
         logging.error("Error [GET]")
         return response
 
@@ -235,7 +236,9 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
             if retry > 0:
-                return self._put_req(body, url, _headers, retry=retry - 1)
+                return self._put_req(
+                    url=url, body=body, _headers=_headers, retry=retry - 1
+                )
         logging.error("Error [PUT]")
         return response
 
@@ -269,7 +272,7 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
             if retry > 0:
-                return self._delete_req(url, _headers, retry=retry - 1)
+                return self._delete_req(url=url, _headers=_headers, retry=retry - 1)
         logging.error("Error [DELETE]")
         return response
 
