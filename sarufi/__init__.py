@@ -74,12 +74,10 @@ class Sarufi(object):
         response = requests.post(
             url, data=data, headers={"Content-Type": "application/json"}
         )
-        print(response.json())
         return response.json()
 
     def __update_token(self):
         self.token = self.__get_token()
-        logging.info(self.token)
         if self.token.get("token"):
             return True
         logging.error("Error updating token")
