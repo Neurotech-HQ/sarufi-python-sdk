@@ -159,7 +159,7 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
             if retry > 0:
-                return self._get_req(url=url, _headers=_headers, retry=retry - 1)
+                return self._get_req(url=url, retry=retry - 1)
         logging.error("Error [GET]")
         return response
 
@@ -197,9 +197,7 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()  # Refresh token
             if retry > 0:
-                return self._post_req(
-                    body=body, url=url, _headers=_headers, retry=retry - 1
-                )  # Retry
+                return self._post_req(body=body, url=url, retry=retry - 1)  # Retry
 
         logging.error("Error [POST]")
         return response
@@ -237,9 +235,7 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
             if retry > 0:
-                return self._put_req(
-                    url=url, body=body, _headers=_headers, retry=retry - 1
-                )
+                return self._put_req(url=url, body=body, retry=retry - 1)
         logging.error("Error [PUT]")
         return response
 
@@ -273,7 +269,7 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()
             if retry > 0:
-                return self._delete_req(url=url, _headers=_headers, retry=retry - 1)
+                return self._delete_req(url=url, retry=retry - 1)
         logging.error("Error [DELETE]")
         return response
 
