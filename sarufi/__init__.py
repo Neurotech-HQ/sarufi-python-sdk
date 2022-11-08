@@ -78,9 +78,9 @@ class Sarufi(object):
 
     def __update_token(self):
         self.token = self.__get_token()
+        logging.debug(self.token)
         if self.token.get("token"):
             return True
-        logging.error(self.token)
         logging.error("Error updating token")
 
     @staticmethod
