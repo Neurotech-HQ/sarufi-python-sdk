@@ -554,6 +554,16 @@ class Sarufi(object):
 
         Returns:
             response (json): bot response
+
+        Examples:
+            >>> from sarufi import Sarufi
+            >>> sarufi = Sarufi('myname@domain.com', 'password')
+            >>> sarufi.chat(bot_id=5, chat_id='123456789', message='Hello')
+
+            # You can also send direct from bot instance
+
+            >>> mybot = sarufi.get_bot(id=5)
+            >>> mybot.respond(chat_id='123456789', message='Hello')
         """
         logging.info("Sending message to bot and returning response")
         response = self._fetch_response(
@@ -569,6 +579,42 @@ class Sarufi(object):
             return response.json()
 
         logging.error("Message not sent[CHAT]")
+        return response.json()
+
+    def chat_status(self, bot_id: int, chat_id: str):
+        """
+        Handle chat messages conversations
+
+        Help to fetch the status of a chat session
+
+        Args:
+            bot_id (int): The ID of the chatbot to get
+            chat_id (str): The ID of the chat session
+
+        Returns:
+            response (json): bot response
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('sarufi-username', 'sarufi-password')
+        >>> sarufi.chat_status(bot_id=5, chat_id='chat_id')
+        >>> {'current_state': 'greetings', 'next_state':'end'}
+
+        """
+        logging.info("Sending message to bot and returning response")
+        url = self._BASE_URL + "conversation/status"
+        data = {
+            "chat_id": chat_id,
+            "bot_id": bot_id,
+        }
+        response = self._post_req(url=url, body=data)
+        logging.info(f"Status code: {response.status_code}")
+        if response.status_code == 200:
+            logging.info("Message sent successfully")
+            return response.json()
+
+        logging.error("Message not sent[CHAT-STATUS]")
         return response.json()
 
     def delete_bot(self, id: int) -> Dict[Any, Any]:
@@ -814,6 +860,26 @@ class Bot(Sarufi):
             message_type=message_type,
             channel=channel,
         )
+
+    def chat_state(self, chat_id: str) -> Union[Dict, None]:
+        """chat_state
+
+        Returns the current state and the next state of the chat
+
+        Args:
+            chat_id (str): The chat id to get the state of
+
+        Returns:
+            Union[Dict, None]: The state of the chat
+
+        Examples:
+            >>> from sarufi import Sarufi
+            >>> sarufi = Sarufi('myname@domain.com', 'password')
+            >>> chatbot = sarufi.get_bot(1)
+            >>> chatbot.chat_state('chat_id')
+            >>> {'current_state': 'greeting', 'next_state': 'main_menu'}
+        """
+        return self.chat_status(bot_id=self.id, chat_id=chat_id)
 
     def delete(self):
         """
