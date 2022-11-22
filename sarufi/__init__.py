@@ -603,18 +603,54 @@ class Sarufi(object):
 
         """
         logging.info("Sending message to bot and returning response")
-        url = self._BASE_URL + "conversation/status"
+        url = self._BASE_URL + "conversation/allchannels/status"
         data = {
             "chat_id": chat_id,
-            "bot_id": bot_id,
+            "bot_id": str(bot_id),
         }
         response = self._post_req(url=url, body=data)
-        logging.info(f"Status code: {response.status_code}")
         if response.status_code == 200:
             logging.info("Message sent successfully")
             return response.json()
 
-        logging.error("Message not sent[CHAT-STATUS]")
+        logging.error("Message not sent[CHAT]")
+        return response.json()
+
+    def update_conversation_state(self, bot_id: int, chat_id: str, next_state: str):
+        """
+        Update the conversation state of a chat session
+
+        Use this to explicitly update the conversation state of a chat session
+
+        Args:
+            bot_id (int): The ID of the chatbot to get
+            chat_id (str): The ID of the chat session
+            next_state(str): The next state to update to
+
+        Returns:
+            response (json): bot response
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('sarufi-username', 'sarufi-password')
+        >>> sarufi.update_conversation_state(bot_id=5, chat_id='chat_id', state='greetings')
+        >>> {..new state machine..}
+
+        """
+        logging.info("Sending message to bot and returning response")
+        url = self._BASE_URL + "conversation/allchannels/state"
+        data = {
+            "chat_id": chat_id,
+            "bot_id": str(bot_id),
+            "next_state": next_state,
+        }
+        response = self._post_req(url=url, body=data)
+        if response.status_code == 200:
+            logging.info("Message sent successfully")
+            return response.json()
+
+        logging.error("Message not sent[CHAT]")
         return response.json()
 
     def delete_bot(self, id: int) -> Dict[Any, Any]:
