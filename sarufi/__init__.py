@@ -639,7 +639,7 @@ class Sarufi(object):
 
         """
         logging.info("Sending message to bot and returning response")
-        url = self._BASE_URL + "conversation/allchannels/state"
+        url = self._BASE_URL + "conversation-state"
         data = {
             "chat_id": chat_id,
             "bot_id": str(bot_id),
