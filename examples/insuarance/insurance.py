@@ -6,9 +6,9 @@ sarufi = Sarufi("testing@gmail.com", "xxx")
 
 def create_insuarance_bot():
     response = sarufi.create_bot(
-        project_name="My Insurace Bot",
+        name="My Insurace Bot",
         description="My bot can do a lot",
-        training_data=json.load(open("intents.json")),
+        intents=json.load(open("intents.json")),
         flow=json.load(open("flow.json")),
     )
 
@@ -23,7 +23,7 @@ def chat():
 
 
 def respond(message, chat_id):
-    response = sarufi.chat(project_id=3, chat_id=chat_id, message=message)
+    response = sarufi.chat(bot_id=3, chat_id=chat_id, message=message)
     return response.get("message")
 
 
