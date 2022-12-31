@@ -118,6 +118,7 @@ class Sarufi(object):
             except Exception as e:
                 logging.error(e)
                 logging.error("Could not read file")
+                return None
         raise FileNotFoundError(f"File {_file} not found")
 
     @property
