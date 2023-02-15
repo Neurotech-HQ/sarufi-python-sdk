@@ -70,7 +70,8 @@ class Sarufi(object):
     def __get_token(self):
         logging.info("Getting token")
         url = self._BASE_URL + "users/login"
-        data = json.dumps({"username": self.__username, "password": self.__password})
+        data = json.dumps({"username": self.__username,
+                          "password": self.__password})
         response = requests.post(
             url, data=data, headers={"Content-Type": "application/json"}
         )
@@ -197,7 +198,8 @@ class Sarufi(object):
             logging.info("Token invalid[REFRESHING]")
             self.__update_token()  # Refresh token
             if retry > 0:
-                return self._post_req(body=body, url=url, retry=retry - 1)  # Retry
+                # Retry
+                return self._post_req(body=body, url=url, retry=retry - 1)
 
         logging.error("Error [POST]")
         return response
@@ -280,6 +282,8 @@ class Sarufi(object):
         industry: str = None,
         flow: Dict[str, Any] = None,
         intents: Dict[str, List[str]] = None,
+        webhook_url: str = None,
+        webhook_trigger_intents: List[str] = None,
         visible_on_community: bool = None,
     ) -> Union[type[Bot], Dict[Any, Any]]:
         """create_bot
@@ -314,6 +318,8 @@ class Sarufi(object):
             "intents": intents,
             "flows": flow,
             "industry": industry,
+            "webhook_url": webhook_url,
+            "webhook_trigger_intents": webhook_trigger_intents,
             "visible_on_community": visible_on_community,
         }
         response = self._post_req(body=data, url=url)
@@ -361,6 +367,8 @@ class Sarufi(object):
             metadata.get("name", "put name here"),
             description=metadata.get("description"),
             industry=metadata.get("industry"),
+            webhook_url=metadata.get('webhook_url'),
+            webhook_trigger_intents=metadata.get('webhook_trigger_intents'),
             visible_on_community=metadata.get("visible_on_community"),
             intents=intents,
             flow=flow,
@@ -374,6 +382,8 @@ class Sarufi(object):
         description: str = None,
         intents: Dict[str, List[str]] = None,
         flow: Dict[str, Any] = None,
+        webhook_url: str = None,
+        webhook_trigger_intents: List[str] = None,
         visible_on_community: bool = None,
     ) -> Union[type[Bot], Dict[Any, Any]]:
         """update_bot
@@ -386,6 +396,8 @@ class Sarufi(object):
             description (str, optional):new chatbot description . Defaults to None.
             intents (Dict[str, List[str]], optional): updated intents . Defaults to None.
             flow (Dict[str, Any], optional): updated flow . Defaults to None.
+            webhook_url(str): The URL to be triggred by the chatbot at the fulfillment of intent 
+            webhook_trigger_intents(List[str]): Intents to be triggered by the webhook
 
         Returns:
             Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot updated successfully otherwise dict with error message
@@ -412,6 +424,8 @@ class Sarufi(object):
             "intents": intents,
             "flows": flow,
             "industry": industry,
+            "webhook_url": webhook_url,
+            "webhook_trigger_intents": webhook_trigger_intents,
             "visible_on_community": visible_on_community,
         }
         response = self._put_req(body=data, url=url)
@@ -464,6 +478,8 @@ class Sarufi(object):
             name=metadata.get("name"),
             industry=metadata.get("industry"),
             description=metadata.get("description"),
+            webhook_url=metadata.get("webhook_url"),
+            webhook_trigger_intents=metadata.get("webhook_trigger_intents"),
             visible_on_community=metadata.get("visible_on_community"),
             intents=intents,
             flow=flow,
@@ -781,7 +797,8 @@ class Bot(Sarufi):
     def visible_on_community(self, visible_on_community: bool):
         if isinstance(visible_on_community, bool):
             self.data["visible_on_community"] = visible_on_community
-            r = self.update_bot(self.id, visible_on_community=visible_on_community)
+            r = self.update_bot(
+                self.id, visible_on_community=visible_on_community)
             logging.info(r)
         else:
             raise TypeError("visible_on_community must be a boolean")
@@ -821,9 +838,11 @@ class Bot(Sarufi):
             updated_intents = self.intents
             updated_intents.update(intents)
             self.intents = updated_intents
-            logging.info(f'A new intents "{list(intents.keys())}" has been added')
+            logging.info(
+                f'A new intents "{list(intents.keys())}" has been added')
         else:
-            raise TypeError("intent must be a dictionary {intent_name: [utterances]}")
+            raise TypeError(
+                "intent must be a dictionary {intent_name: [utterances]}")
 
     @property
     def flow(self):
@@ -863,6 +882,46 @@ class Bot(Sarufi):
             logging.info(f'A new flow "{list(flow.keys())}" has been added')
         else:
             raise TypeError("flow must be a dictionary {flow_name: flow_data}")
+
+    @property()
+    def webhook_url(self) -> str:
+        """
+        Returns the Webhook to be triggered by the chatbot
+
+        Returns(str): The Webhook of a chatbot
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('testing@xyz.com', '123')
+        >>> mybot = sarufi.get_bot(bot_id)
+        >>> mybot.webhook_url
+        ... https://www.xyz.com/hook
+        """
+        return self.data.get('webhook_url')
+
+    @webhook_url.setter
+    def webhook_url(self, url: str) -> str:
+        """Set up a new webhook URL for the chatbot
+
+        Args:
+            url (str): The new webhook URL (eg. https://www.xyx.com/hook)
+
+        Returns:
+            str: The updated Webhook URL for the chatbot
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('testing@xyz.com', '123')
+        >>> mybot = sarufi.get_bot(bot_id)
+        >>> mybot.webhook_url = "https://www.xyx.com/hook"
+        ...https://www.xyz.com/hook"
+        """
+        if isinstance(flow, dict):
+            self.data["webhook_url"] = url
+            r = self.update_bot(self.id, webhook_url=flow)
+            logging.info(r)
+        else:
+            raise TypeError("flow must be a Dictionary")
 
     def respond(
         self,
