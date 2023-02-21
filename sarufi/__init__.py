@@ -748,6 +748,23 @@ class Bot(Sarufi):
     @property
     def id(self):
         return self.data.get("id")
+    
+    @property
+    def evaluation_metrics(self) -> Dict:
+        """
+        Returns the evaluation metrics of bot
+
+        Returns(Dict): Evaluation Metrics of a bot
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('testing@xyz.com', '123')
+        >>> mybot = sarufi.get_bot(bot_id)
+        >>> mybot.evaluation_metrics
+        ... {}
+        """
+        return self.data.get("evaluation_metrics")
 
     @property
     def name(self):
