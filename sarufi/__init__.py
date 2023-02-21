@@ -763,7 +763,7 @@ class Bot(Sarufi):
         >>> sarufi = Sarufi('testing@xyz.com', '123')
         >>> mybot = sarufi.get_bot(bot_id)
         >>> mybot.evaluation_metrics
-        ... {}
+        ... None
         """
         return self.data.get("evaluation_metrics")
 
