@@ -1010,6 +1010,37 @@ class Bot(Sarufi):
             channel=channel,
         )
 
+    def predict_intent(self, message: str,) -> Dict[bool, str, float]:
+        """predict an intent of a message
+
+        Gets an intent prediction on the message provided
+
+        Args:
+            message (str): the message you want to predict
+
+        Returns:
+            Dict[bool, str, float]: An object containing the intent, status and the confidence of prediction
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> bot = sarufi.get_bot(id=5)
+        >>> print(bot.predict_intent("your message"))
+        {
+            intent: "an_intent",
+            status: true
+            confidence: 0.75,
+        }
+        """
+
+        url = self._BASE_URL + "predict/intent"
+        response = self._post_req(url, {
+            "bot_id": self.data.get("id"),
+            message: message
+        })
+        return response.json()
+
     def chat_state(self, chat_id: str) -> Union[Dict, None]:
         """chat_state
 
