@@ -747,10 +747,31 @@ class Bot(Sarufi):
         self.data = data
         self.chat_id = str(uuid4())
 
+    # Getter only
     @property
     def id(self):
         return self.data.get("id")
+    
+    @property
+    def evaluation_metrics(self) -> Dict:
+        """
+        Returns the evaluation metrics of bot
 
+        Returns(Dict): Evaluation Metrics of a bot
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('testing@xyz.com', '123')
+        >>> mybot = sarufi.get_bot(bot_id)
+        >>> mybot.evaluation_metrics
+        ... None
+        """
+        return self.data.get("evaluation_metrics")
+
+    # Getter and setters
+
+    # Name attribute
     @property
     def name(self):
         return self.data.get("name")
@@ -764,6 +785,7 @@ class Bot(Sarufi):
         else:
             raise TypeError("name must be a string")
 
+    # Industry attribute
     @property
     def industry(self):
         return self.data.get("industry")
@@ -777,6 +799,7 @@ class Bot(Sarufi):
         else:
             raise TypeError("industry must be a string")
 
+    # Description attribute
     @property
     def description(self):
         return self.data.get("description")
@@ -790,6 +813,7 @@ class Bot(Sarufi):
         else:
             raise TypeError("description must be a string")
 
+    # visible_on_community attribute
     @property
     def visible_on_community(self):
         return self.data.get("visible_on_community")
@@ -803,6 +827,7 @@ class Bot(Sarufi):
         else:
             raise TypeError("visible_on_community must be a boolean")
 
+    # intents attribute
     @property
     def intents(self):
         return self.data.get("intents")
@@ -842,6 +867,8 @@ class Bot(Sarufi):
         else:
             raise TypeError("intent must be a dictionary {intent_name: [utterances]}")
 
+
+    # flow attribute
     @property
     def flow(self):
         return self.data.get("flows")
@@ -881,6 +908,8 @@ class Bot(Sarufi):
         else:
             raise TypeError("flow must be a dictionary {flow_name: flow_data}")
 
+
+    # webhooh_url attribute
     @property
     def webhook_url(self) -> str:
         """
@@ -921,6 +950,8 @@ class Bot(Sarufi):
         else:
             raise TypeError("webhook_url must be a string")
 
+
+    # webhook_trigger_intents attribute
     @property
     def webhook_trigger_intents(self) -> List[str]:
         """
@@ -946,6 +977,7 @@ class Bot(Sarufi):
         else:
             raise TypeError("intents Trigger must be a list of strings")
 
+    # Get response from a bot
     def respond(
         self,
         message: str,
@@ -979,6 +1011,37 @@ class Bot(Sarufi):
             message_type=message_type,
             channel=channel,
         )
+
+    def predict_intent(self, message: str,) -> Dict[bool, str, float]:
+        """predict an intent of a message
+
+        Gets an intent prediction on the message provided
+
+        Args:
+            message (str): the message you want to predict
+
+        Returns:
+            Dict[bool, str, float]: An object containing the intent, status and the confidence of prediction
+
+        Examples:
+
+        >>> from sarufi import Sarufi
+        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> bot = sarufi.get_bot(id=5)
+        >>> print(bot.predict_intent("your message"))
+        {
+            intent: "an_intent",
+            status: true
+            confidence: 0.75,
+        }
+        """
+
+        url = self._BASE_URL + "predict/intent"
+        response = self._post_req(url, {
+            "bot_id": self.data.get("id"),
+            message: message
+        })
+        return response.json()
 
     def chat_state(self, chat_id: str) -> Union[Dict, None]:
         """chat_state
