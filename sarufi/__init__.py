@@ -80,7 +80,7 @@ class Sarufi(object):
 
     def __update_token(self):
         self.token = self.__get_token()
-        if self.token.get("token"):
+        if self.token.get("access_token"):
             return True
         logging.error("Error updating token")
 
@@ -125,9 +125,9 @@ class Sarufi(object):
 
     @property
     def headers(self):
-        if self.token.get("token"):
+        if self.token.get("access_token"):
             return {
-                "Authorization": "Bearer " + self.token.get("token"),
+                "Authorization": "Bearer " + self.token.get("access_token"),
                 "Content-Type": "application/json",
             }
         else:
@@ -751,7 +751,7 @@ class Bot(Sarufi):
     @property
     def id(self):
         return self.data.get("id")
-    
+
     @property
     def evaluation_metrics(self) -> Dict:
         """
@@ -867,7 +867,6 @@ class Bot(Sarufi):
         else:
             raise TypeError("intent must be a dictionary {intent_name: [utterances]}")
 
-
     # flow attribute
     @property
     def flow(self):
@@ -907,7 +906,6 @@ class Bot(Sarufi):
             logging.info(f'A new flow "{list(flow.keys())}" has been added')
         else:
             raise TypeError("flow must be a dictionary {flow_name: flow_data}")
-
 
     # webhooh_url attribute
     @property
@@ -949,7 +947,6 @@ class Bot(Sarufi):
             logging.info(r)
         else:
             raise TypeError("webhook_url must be a string")
-
 
     # webhook_trigger_intents attribute
     @property
@@ -1012,7 +1009,10 @@ class Bot(Sarufi):
             channel=channel,
         )
 
-    def predict_intent(self, message: str,) -> Dict[bool, str, float]:
+    def predict_intent(
+        self,
+        message: str,
+    ) -> Dict[bool, str, float]:
         """predict an intent of a message
 
         Gets an intent prediction on the message provided
@@ -1037,10 +1037,9 @@ class Bot(Sarufi):
         """
 
         url = self._BASE_URL + "predict/intent"
-        response = self._post_req(url, {
-            "bot_id": self.data.get("id"),
-            message: message
-        })
+        response = self._post_req(
+            url, {"bot_id": self.data.get("id"), message: message}
+        )
         return response.json()
 
     def chat_state(self, chat_id: str) -> Union[Dict, None]:
