@@ -29,21 +29,21 @@ class Sarufi(object):
 
     def __init__(
         self,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
         token: Optional[str] = None,
     ) -> None:
         """Initialize the Sarufi class with username and password or token
 
 
         Args:
-            username (Optional[str], optional): Sarufi API username. Defaults to None.
-            password (Optional[str], optional): Sarufi API password. Defaults to None.
+            client_id (Optional[str], optional): Sarufi API Client ID. Defaults to None.
+            client_secret (Optional[str], optional): Sarufi API Client Secret. Defaults to None.
             token (Optional[str], optional): Sarufi API token. Defaults to None.
 
         Examples:
 
-        >>> sarufi = Sarufi(username="username", password="password")
+        >>> sarufi = Sarufi(client_id="client_id", client_secret="client_secret")
         >>> dir(sarufi)
                 [
                     "...",
@@ -60,8 +60,8 @@ class Sarufi(object):
                     "update_from_file",
                 ]
         """
-        self.__username = username
-        self.__password = password
+        self.__client_id = client_id
+        self.__client_secret = client_secret
         if token:
             self.token = token
         else:
@@ -69,8 +69,10 @@ class Sarufi(object):
 
     def __get_token(self):
         logging.info("Getting token")
-        url = self._BASE_URL + "users/login"
-        data = json.dumps({"username": self.__username, "password": self.__password})
+        url = self._BASE_URL + "api/access_token/"
+        data = json.dumps(
+            {"client_id": self.__client_id, "client_secret": self.__client_secret}
+        )
         response = requests.post(
             url, data=data, headers={"Content-Type": "application/json"}
         )
@@ -950,7 +952,7 @@ class Bot(Sarufi):
         message_type: str = "text",
         channel: str = "general",
         chat_id: str = None,
-    ) -> (Dict | None):
+    ) -> Dict | None:
         """respond to a message
 
         Args:
