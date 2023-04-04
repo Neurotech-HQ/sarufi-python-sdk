@@ -399,6 +399,7 @@ class Sarufi(object):
             flow (Dict[str, Any], optional): updated flow . Defaults to None.
             webhook_url(str): The URL to be triggred by the chatbot at the fulfillment of intent
             webhook_trigger_intents(List[str]): Intents to be triggered by the webhook
+            visible_on_community(bool): Should a bot be visible on a community page.
 
         Returns:
             Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot updated successfully otherwise dict with error message
