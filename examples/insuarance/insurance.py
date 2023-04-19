@@ -1,7 +1,7 @@
 import json
 from sarufi import Sarufi
 
-sarufi = Sarufi("testing@gmail.com", "xxx")
+sarufi = Sarufi('your-client-id', 'your-client-secret')
 
 
 def create_insuarance_bot():

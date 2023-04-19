@@ -33,7 +33,7 @@ class Sarufi(object):
         client_secret: Optional[str] = None,
         token: Optional[str] = None,
     ) -> None:
-        """Initialize the Sarufi class with username and password or token
+        """Initialize the Sarufi class with client_id and client_secret or token
 
 
         Args:
@@ -63,7 +63,7 @@ class Sarufi(object):
         self.__client_id = client_id
         self.__client_secret = client_secret
         if token:
-            self.token = token
+            self.token = {"access_token":token}
         else:
             self.token = self.__get_token()
 
@@ -303,7 +303,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('myname@domain.com', 'password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         2022-08-23 15:03:00,928 - root - INFO - Getting token
         >>> bot = sarufi.create_bot(name='Maria')
         2022-08-23 15:03:09,891 - root - INFO - Creating bot
@@ -349,7 +349,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> sarufi = Sarufi('client_id', 'client_secret')
         >>> bot = sarufi.create_from_file(
         ...     intents='data/intents.json',
         ...     flow='data/flow.json',
@@ -399,6 +399,7 @@ class Sarufi(object):
             flow (Dict[str, Any], optional): updated flow . Defaults to None.
             webhook_url(str): The URL to be triggred by the chatbot at the fulfillment of intent
             webhook_trigger_intents(List[str]): Intents to be triggered by the webhook
+            visible_on_community(bool): Should a bot be visible on a community page.
 
         Returns:
             Union[type[Bot], Dict[Any, Any]]: Chatbot object if bot updated successfully otherwise dict with error message
@@ -406,7 +407,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> bot = sarufi.update_bot(
             ...     id=5,
             ...     name='Maria',
@@ -457,7 +458,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> bot = sarufi.update_from_file(
             ...     id=5,
             ...     intents='data/intents.json',
@@ -500,7 +501,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> bot = sarufi.get_bot(id=5)
         >>> print(bot)
         Bot(name='iBank', id=23)
@@ -523,7 +524,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('myname@domain.com', 'password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         2022-08-23 15:03:00,928 - root - INFO - Getting token
         >>> sarufi.bots()
         2022-08-23 15:03:57,845 - root - INFO - Getting bots
@@ -575,7 +576,7 @@ class Sarufi(object):
 
         Examples:
             >>> from sarufi import Sarufi
-            >>> sarufi = Sarufi('myname@domain.com', 'password')
+            >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
             >>> sarufi.chat(bot_id=5, chat_id='123456789', message='Hello')
 
             # You can also send direct from bot instance
@@ -615,7 +616,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('sarufi-username', 'sarufi-password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> sarufi.chat_status(bot_id=5, chat_id='chat_id')
         >>> {'current_state': 'greetings', 'next_state':'end'}
 
@@ -651,7 +652,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('sarufi-username', 'sarufi-password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> sarufi.update_conversation_state(bot_id=5, chat_id='chat_id', state='greetings')
         >>> {..new state machine..}
 
@@ -685,7 +686,7 @@ class Sarufi(object):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your-email', 'your-password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> sarufi.delete_bot(5)
         {'message': 'Bot with ID 5 deleted successfully'}
         """
@@ -704,7 +705,7 @@ class Bot(Sarufi):
     Examples:
 
     >>> from sarufi import Sarufi
-    >>> sarufi = Sarufi('your_email', 'your_password')
+    >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
     >>> bot = sarufi.get_bot(4)
 
     ### Get bot name
@@ -999,7 +1000,7 @@ class Bot(Sarufi):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> chatbot = sarufi.get_bot(1)
         >>> chatbot.respond('hello')
         {'message': ['Hello, how can I help you?'], 'next_state': 'greeting'}
@@ -1026,7 +1027,7 @@ class Bot(Sarufi):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your_email', 'your_password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> bot = sarufi.get_bot(id=5)
         >>> print(bot.predict_intent("your message"))
         {
@@ -1056,7 +1057,7 @@ class Bot(Sarufi):
 
         Examples:
             >>> from sarufi import Sarufi
-            >>> sarufi = Sarufi('myname@domain.com', 'password')
+            >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
             >>> chatbot = sarufi.get_bot(1)
             >>> chatbot.chat_state('chat_id')
             >>> {'current_state': 'greeting', 'next_state': 'main_menu'}
@@ -1070,7 +1071,7 @@ class Bot(Sarufi):
         Examples:
 
         >>> from sarufi import Sarufi
-        >>> sarufi = Sarufi('your-email', 'your-password')
+        >>> sarufi = Sarufi('your-client-id', 'your-client-secret')
         >>> chatbot = sarufi.get_bot(1)
         >>> chatbot.delete()
         """
