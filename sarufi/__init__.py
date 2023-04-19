@@ -63,7 +63,7 @@ class Sarufi(object):
         self.__client_id = client_id
         self.__client_secret = client_secret
         if token:
-            self.token = token
+            self.token = {"access_token":token}
         else:
             self.token = self.__get_token()
 
