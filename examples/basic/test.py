@@ -3,7 +3,7 @@ from uuid import uuid4
 from sarufi import Sarufi
 
 # initialize the bot
-sarufi = Sarufi("testing@gmail.com", "xxx")
+sarufi = Sarufi('your-client-id', 'your-client-secret')
 
 
 def update_bot():
