@@ -1,15 +1,15 @@
 import json
 from sarufi import Sarufi
 
-sarufi = Sarufi('your-client-id', 'your-client-secret')
+sarufi = Sarufi(api_key='YOUR_API_KEY')
 
 
 def create_insuarance_bot():
     response = sarufi.create_bot(
-        project_name="Kubeti",
+        name="Kubeti",
         description="Nakusaidia kubeti",
-        training_data=json.load(open("intents.json")),
-        flow=json.load(open("flow.json")),
+        intents=json.load(open("intents.json", encoding='utf-8')),
+        flow=json.load(open("flow.json", encoding='utf-8')),
     )
 
     print(response)
@@ -17,11 +17,11 @@ def create_insuarance_bot():
 
 def update_bot():
     response = sarufi.update_bot(
-        project_name="Kubeti",
+        name="Kubeti",
         description="Nakusaidia kubeti",
-        training_data=json.load(open("intents.json")),
-        flow=json.load(open("flow.json")),
-        project_id=5,
+        intents=json.load(open("intents.json", encoding='utf-8')),
+        flow=json.load(open("flow.json", encoding='utf-8')),
+        id=5,
     )
     print(response)
 
@@ -29,12 +29,12 @@ def update_bot():
 def chat():
     while True:
         message = input("Me : ")
-        response = sarufi.chat(project_id=5, chat_id="furaha", message=message)
+        response = sarufi.chat(bot_id=5, chat_id="furaha", message=message)
         print(f"Bot: {response}")
 
 
 def respond(message, chat_id):
-    response = sarufi.chat(project_id=5, chat_id=chat_id, message=message)
+    response = sarufi.chat(bot_id=5, chat_id=chat_id, message=message)
     return response.get("message")
 
 

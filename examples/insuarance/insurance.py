@@ -1,7 +1,7 @@
 import json
 from sarufi import Sarufi
 
-sarufi = Sarufi('your-client-id', 'your-client-secret')
+sarufi = Sarufi(api_key='YOUR_API_KEY')
 
 
 def create_insuarance_bot():
@@ -18,7 +18,7 @@ def create_insuarance_bot():
 def chat():
     while True:
         message = input("Me : ")
-        response = sarufi.chat(project_id=3, chat_id="furaha", message=message)
+        response = sarufi.chat(bot_id=3, chat_id="furaha", message=message)
         print(f"Bot: {response}")
 
 

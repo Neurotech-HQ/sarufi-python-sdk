@@ -35,7 +35,7 @@ To authenticate you're bot, you have to specify your client_id and client_secret
 
 ```python
 >>> from sarufi import Sarufi
->>> sarufi = Sarufi('client_id', 'client_secret')
+>>> sarufi = Sarufi(api_key='your API KEY')
 ```
 
 ## Creating a Bot
@@ -79,7 +79,7 @@ You can create your bot from a file, Here is an example on how to create your bo
 ```python
 from sarufi import Sarufi
 
-sarufi = Sarufi("client_id", "client_secret")
+sarufi = Sarufi(api_key='your API KEY')
 
 
 if __name__ == "__main__":
@@ -131,7 +131,7 @@ You can update your bot from a file as follows;
 ```python
 from sarufi import Sarufi
 
-sarufi = Sarufi("client_id", "xxx")
+sarufi = Sarufi(api_key='your API KEY')
 
 
 if __name__ == "__main__":
@@ -150,7 +150,7 @@ Here you have to know the bot ID and also specify your user unique ID;
 
 ```python
 >>> from sarufi import Sarufi
->>> sarufi = Sarufi('client_id', 'client_secret')
+>>> sarufi = Sarufi(api_key='your API KEY')
 2022-08-23 18:30:32,918 - root - INFO - Getting token
 >>> bots = sarufi.bots()
 2022-08-23 18:30:38,223 - root - INFO - Getting bots
@@ -175,7 +175,7 @@ Query a bot by ID
 
 ```python
 >>> from sarufi import Sarufi
->>> sarufi = Sarufi('client_id', 'client_secret')
+>>> sarufi = Sarufi(api_key='your API KEY')
 >>> maria= sarufi.get_bot(5)
 2022-08-23 18:44:05,473 - root - INFO - Getting token
 >>> maria
@@ -188,7 +188,7 @@ Delete a bot by ID
 
 ```python
 >>> from sarufi import Sarufi
->>> sarufi = Sarufi('client_id', 'client_secret')
+>>> sarufi = Sarufi(api_key='your API KEY')
 >>> sarufi.delete_bot(5)
 ```
 

@@ -3,7 +3,7 @@ from uuid import uuid4
 from sarufi import Sarufi
 
 # initialize the bot
-sarufi = Sarufi('your-client-id', 'your-client-secret')
+sarufi = Sarufi(api_key='YOUR_API_KEY')
 
 
 def update_bot():
