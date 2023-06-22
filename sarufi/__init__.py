@@ -125,7 +125,7 @@ class Sarufi(object):
             _headers (Dict[str, str], optional): Authenticated header with Bearer token. Defaults to None.
         """
 
-        response = requests.get(url, headers=_headers or self.headers, timeout=10)
+        response = requests.get(url, headers=_headers or self.headers, timeout=120)
         if response.status_code == 200:
             return response
         elif response.status_code == 400:
@@ -153,7 +153,7 @@ class Sarufi(object):
 
         _data = json.dumps(self.__strip_of_nones(body))  # remove None values
         _headers = _headers or self.headers
-        response = requests.post(url, data=_data, headers=_headers, timeout=10)
+        response = requests.post(url, data=_data, headers=_headers, timeout=120)
         if response.status_code == 200:
             return response
         elif response.status_code == 400:
@@ -181,7 +181,7 @@ class Sarufi(object):
 
         _data = json.dumps(self.__strip_of_nones(body))
         _headers = _headers or self.headers
-        response = requests.put(url, data=_data, headers=_headers, timeout=10)
+        response = requests.put(url, data=_data, headers=_headers, timeout=120)
         if response.status_code == 200:
             return response
         elif response.status_code == 400:
@@ -206,7 +206,7 @@ class Sarufi(object):
         """
 
         _headers = _headers or self.headers
-        response = requests.delete(url, headers=_headers,timeout=10)
+        response = requests.delete(url, headers=_headers,timeout=120)
         if response.status_code == 200:
             return response
         elif response.status_code == 400:
