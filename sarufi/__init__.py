@@ -20,21 +20,20 @@ import requests
 # Create logger instance
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+logger_formatter = logging.Formatter(
+    "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger_handler = logging.StreamHandler()
+logger_handler.setFormatter(logger_formatter)
+logger.addHandler(logger_handler)
 
-# Set up logging handler for lazy reloading
-handler = WatchedFileHandler("sarufi.log")
-handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
-logger.addHandler(handler)
 
 class Sarufi(object):
     """Sarufi Class"""
 
     _BASE_URL: str = "https://developers.sarufi.io/"
 
-    def __init__(
-        self,
-        api_key:str 
-    ) -> None:
+    def __init__(self, api_key: str) -> None:
         """Initialize the Sarufi class with API Key
 
 
@@ -69,7 +68,6 @@ class Sarufi(object):
         error_message = f"{data} should be dict not {type(data)}"
         logging.error(error_message)
 
-
     @staticmethod
     def _read_file(_file: Union[Path, str]) -> Dict[Any, Any]:
         """_read_file
@@ -89,10 +87,10 @@ class Sarufi(object):
             try:
                 if any([_file.endswith(ext) for ext in [".yaml", ".yml"]]):
                     logger.info(f"Reading {_file} as YAML")
-                    return safe_load(open(_file, encoding='utf-8'))
+                    return safe_load(open(_file, encoding="utf-8"))
                 elif _file.endswith(".json"):
                     logger.info(f"Reading {_file} as JSON")
-                    return json.load(open(_file, encoding='utf-8'))
+                    return json.load(open(_file, encoding="utf-8"))
                 else:
                     raise FileNotFoundError(f"{_file} is not a valid file")
             except Exception as error:
@@ -104,7 +102,7 @@ class Sarufi(object):
     @property
     def headers(self):
         """headers
-            Creates a header with the Bearer token using the token property
+        Creates a header with the Bearer token using the token property
         """
         return {
             "Authorization": "Bearer " + self.token,
@@ -206,7 +204,7 @@ class Sarufi(object):
         """
 
         _headers = _headers or self.headers
-        response = requests.delete(url, headers=_headers,timeout=120)
+        response = requests.delete(url, headers=_headers, timeout=120)
         if response.status_code == 200:
             return response
         elif response.status_code == 400:
