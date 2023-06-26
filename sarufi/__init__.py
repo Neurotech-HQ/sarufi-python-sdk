@@ -557,7 +557,7 @@ class Sarufi(object):
 
         """
         logger.info("Sending message to bot and returning response")
-        url = self._BASE_URL + "conversation/allchannels/status"
+        url = self._BASE_URL + "conversation/status"
         data = {
             "chat_id": chat_id,
             "bot_id": str(bot_id),
