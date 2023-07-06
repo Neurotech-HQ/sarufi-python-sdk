@@ -477,7 +477,7 @@ class Sarufi(object):
         self, bot_id: int, chat_id: str, message: str, message_type: str, channel: str
     ):
         url = self._BASE_URL + "conversation/"
-        if channel == "whatsapp":
+        if channel.lower() == "whatsapp":
             logger.info("Sending message to bot via whatsapp")
             url = url + "whatsapp/"
 
@@ -557,7 +557,7 @@ class Sarufi(object):
 
         """
         logger.info("Sending message to bot and returning response")
-        url = self._BASE_URL + "conversation/allchannels/status"
+        url = self._BASE_URL + "conversation/status"
         data = {
             "chat_id": chat_id,
             "bot_id": str(bot_id),
