@@ -19,7 +19,7 @@ setup(
     author_email="isaackeinstein@gmail.com",
     license="MIT",
     packages=["sarufi"],
-    install_requires=["requests", "pyyaml", "python-telegram-bot"],
+    install_requires=["requests", "pyyaml"],
     keywords=[
         "sarufi",
         "Sarufi Python SDK",
