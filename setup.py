@@ -9,7 +9,7 @@ with open(path.join(this_directory, "description.md"), encoding="utf-8") as f:
 
 setup(
     name="sarufi",
-    version="0.1.5",
+    version="0.1.9",
     description="Opensource python wrapper to Sarufi Conversation API",
     long_description=long_description,
     long_description_content_type="text/markdown",

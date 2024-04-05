@@ -476,10 +476,10 @@ class Sarufi(object):
     def _fetch_response(
         self, bot_id: int, chat_id: str, message: str, message_type: str, channel: str
     ):
-        url = self._BASE_URL + "conversation/"
+        url = self._BASE_URL + "conversation"
         if channel.lower() == "whatsapp":
             logger.info("Sending message to bot via whatsapp")
-            url = url + "whatsapp/"
+            url = f"{url}/whatsapp"
 
         data = {
             "chat_id": chat_id,
